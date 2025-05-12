@@ -1,14 +1,42 @@
 package io.intellij.dsa.sort;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * SortHelper
  *
  * @author tech@intellij.io
  * @since 2025-05-12
  */
-public class SortHelper {
+@Slf4j
+public class SortHelper<E extends Comparable<Integer>> implements Sort<Integer> {
+    private final Sort<Integer> sortMethod;
+    private final Integer[] array;
+    private final int size;
 
-    public static Integer[] createRandomArray(int size, int max) {
+    public SortHelper(Sort<Integer> sortMethod, int size, int max) {
+        this.sortMethod = sortMethod;
+        this.size = size;
+        this.array = createRandomArray(size, max);
+    }
+
+    public boolean sort() {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        this.sortMethod.sort(this.array);
+        stopWatch.stop();
+        log.info("sort method = {}|size={}|sort time= {}ms", sortMethod.getClass().getSimpleName(), this.size, stopWatch.getTime());
+        return isSorted(this.array);
+    }
+
+    @Override
+    public void sort(@NotNull Integer[] array) {
+        this.sortMethod.sort(array);
+    }
+
+    public Integer[] createRandomArray(int size, int max) {
         Integer[] array = new Integer[size];
         for (int i = 0; i < size; i++) {
             array[i] = (int) (Math.random() * max);
@@ -16,7 +44,7 @@ public class SortHelper {
         return array;
     }
 
-    public static boolean isSorted(Integer[] array) {
+    public boolean isSorted(Integer[] array) {
         for (int i = 0; i < array.length - 1; i++) {
             if (array[i] > array[i + 1]) {
                 return false;
@@ -24,5 +52,4 @@ public class SortHelper {
         }
         return true;
     }
-
 }

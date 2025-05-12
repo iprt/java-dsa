@@ -1,6 +1,7 @@
 package io.intellij.dsa.sort;
 
 import io.intellij.dsa.sort.impl.BubbleSort;
+import io.intellij.dsa.sort.impl.InsertSort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +15,22 @@ public class SortTest {
 
     @Test
     public void testBubbleSort() {
-        Integer[] array = SortHelper.createRandomArray(10000, 10000);
-        new BubbleSort<Integer>().sort(array);
-        boolean sorted = SortHelper.isSorted(array);
-        Assertions.assertTrue(sorted);
+        final int size = 10000;
+        final int max = 10000;
+        Assertions.assertTrue(
+                new SortHelper<Integer>(new BubbleSort<>(), size, max)
+                        .sort()
+        );
+    }
+
+    @Test
+    public void testInsertSort() {
+        final int size = 10000;
+        final int max = 10000;
+        Assertions.assertTrue(
+                new SortHelper<Integer>(new InsertSort<>(), size, max)
+                        .sort()
+        );
     }
 
 }
