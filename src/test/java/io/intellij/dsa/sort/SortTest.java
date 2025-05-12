@@ -20,26 +20,29 @@ public class SortTest {
 
     @Test
     public void testBubbleSort() {
-        SortHelper.SortResult sortResult = new SortHelper<Integer>(new BubbleSort<>(), size, max).sort();
-        Assertions.assertTrue(sortResult.isSorted());
+        sortTest(new BubbleSort<>());
     }
 
     @Test
     public void testInsertSort() {
-        SortHelper.SortResult sortResult = new SortHelper<Integer>(new InsertSort<>(), size, max).sort();
-        Assertions.assertTrue(sortResult.isSorted());
+        sortTest(new InsertSort<>());
     }
 
     @Test
     public void testMerge() {
-        SortHelper.SortResult sortResult = new SortHelper<Integer>(new MergeSort<>(), size, max).sort();
-        Assertions.assertTrue(sortResult.isSorted());
+        sortTest(new MergeSort<>());
     }
 
     @Test
     public void testQuick() {
-        SortHelper.SortResult sortResult = new SortHelper<Integer>(new QuickSort<>(), size, max).sort();
+        sortTest(new QuickSort<>());
+    }
+
+    private void sortTest(Sort<Integer> sort) {
+        SortHelper.SortResult sortResult = new SortHelper<>(sort, size, max).sort();
+        System.out.println(sortResult);
         Assertions.assertTrue(sortResult.isSorted());
+        Assertions.assertTrue(sortResult.isSame());
     }
 
 }
