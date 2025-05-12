@@ -1,8 +1,10 @@
 package io.intellij.dsa.sort.impl;
 
 import io.intellij.dsa.sort.Sort;
-import io.intellij.dsa.sort.SortUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static io.intellij.dsa.sort.SortUtils.less;
+import static io.intellij.dsa.sort.SortUtils.swap;
 
 /**
  * InsertSort 插入排序的关键是相邻的两个元素比较和交换
@@ -17,8 +19,8 @@ public class InsertSort<E extends Comparable<E>> implements Sort<E> {
         for (int i = 1; i < array.length; i++) {
             // Find the position where current should be inserted
             for (int j = i; j > 0; j--) {
-                if (SortUtils.less(array[j], array[j - 1])) {
-                    SortUtils.swap(array, j, j - 1);
+                if (less(array[j], array[j - 1])) {
+                    swap(array, j, j - 1);
                 } else {
                     break;
                 }

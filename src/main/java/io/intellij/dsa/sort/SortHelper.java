@@ -22,13 +22,13 @@ public class SortHelper<E extends Comparable<Integer>> implements Sort<Integer> 
         this.array = createRandomArray(size, max);
     }
 
-    public boolean sort() {
+    public SortResult sort() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         this.sortMethod.sort(this.array);
         stopWatch.stop();
         log.info("sort method = {}|size={}|sort time= {}ms", sortMethod.getClass().getSimpleName(), this.size, stopWatch.getTime());
-        return isSorted(this.array);
+        return new SortResult(isSorted(this.array), stopWatch.getTime());
     }
 
     @Override
@@ -51,5 +51,8 @@ public class SortHelper<E extends Comparable<Integer>> implements Sort<Integer> 
             }
         }
         return true;
+    }
+
+    public record SortResult(boolean isSorted, long costMs) {
     }
 }

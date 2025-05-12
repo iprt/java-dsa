@@ -1,8 +1,10 @@
 package io.intellij.dsa.sort.impl;
 
 import io.intellij.dsa.sort.Sort;
-import io.intellij.dsa.sort.SortUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static io.intellij.dsa.sort.SortUtils.less;
+import static io.intellij.dsa.sort.SortUtils.swap;
 
 /**
  * BubblingSort
@@ -16,8 +18,8 @@ public class BubbleSort<E extends Comparable<E>> implements Sort<E> {
     public void sort(@NotNull E[] array) {
         for (int i = 0; i < array.length - 1; i++) {
             for (int j = i + 1; j < array.length; j++) {
-                if (SortUtils.less(array[j], array[i])) {
-                    SortUtils.swap(array, i, j);
+                if (less(array[j], array[i])) {
+                    swap(array, i, j);
                 }
             }
         }

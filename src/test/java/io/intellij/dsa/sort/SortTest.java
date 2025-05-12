@@ -2,6 +2,8 @@ package io.intellij.dsa.sort;
 
 import io.intellij.dsa.sort.impl.BubbleSort;
 import io.intellij.dsa.sort.impl.InsertSort;
+import io.intellij.dsa.sort.impl.MergeSort;
+import io.intellij.dsa.sort.impl.QuickSort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,24 +15,31 @@ import org.junit.jupiter.api.Test;
  */
 public class SortTest {
 
+    final int size = 100000;
+    final int max = 100000;
+
     @Test
     public void testBubbleSort() {
-        final int size = 10000;
-        final int max = 10000;
-        Assertions.assertTrue(
-                new SortHelper<Integer>(new BubbleSort<>(), size, max)
-                        .sort()
-        );
+        SortHelper.SortResult sortResult = new SortHelper<Integer>(new BubbleSort<>(), size, max).sort();
+        Assertions.assertTrue(sortResult.isSorted());
     }
 
     @Test
     public void testInsertSort() {
-        final int size = 10000;
-        final int max = 10000;
-        Assertions.assertTrue(
-                new SortHelper<Integer>(new InsertSort<>(), size, max)
-                        .sort()
-        );
+        SortHelper.SortResult sortResult = new SortHelper<Integer>(new InsertSort<>(), size, max).sort();
+        Assertions.assertTrue(sortResult.isSorted());
+    }
+
+    @Test
+    public void testMerge() {
+        SortHelper.SortResult sortResult = new SortHelper<Integer>(new MergeSort<>(), size, max).sort();
+        Assertions.assertTrue(sortResult.isSorted());
+    }
+
+    @Test
+    public void testQuick() {
+        SortHelper.SortResult sortResult = new SortHelper<Integer>(new QuickSort<>(), size, max).sort();
+        Assertions.assertTrue(sortResult.isSorted());
     }
 
 }
