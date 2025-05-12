@@ -2,6 +2,6 @@
  * package-info
  *
  * @author tech@intellij.io
- * @since 2025-05-09
+ * @since 2025-05-12
  */
-package io.intellij.dsa;
+package io.intellij.dsa.graph;
