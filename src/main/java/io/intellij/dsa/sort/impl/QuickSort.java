@@ -3,9 +3,10 @@ package io.intellij.dsa.sort.impl;
 import io.intellij.dsa.sort.Sort;
 import org.jetbrains.annotations.NotNull;
 
-import static io.intellij.dsa.sort.SortUtils.greaterEquals;
-import static io.intellij.dsa.sort.SortUtils.less;
-import static io.intellij.dsa.sort.SortUtils.swap;
+import static io.intellij.dsa.DSAUtils.greaterEquals;
+import static io.intellij.dsa.DSAUtils.less;
+import static io.intellij.dsa.DSAUtils.swap;
+
 
 /**
  * QuickSort

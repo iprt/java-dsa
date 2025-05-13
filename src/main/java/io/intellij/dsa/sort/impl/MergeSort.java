@@ -1,11 +1,10 @@
 package io.intellij.dsa.sort.impl;
 
 import io.intellij.dsa.sort.Sort;
-import io.intellij.dsa.sort.SortUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import static io.intellij.dsa.sort.SortUtils.less;
+import static io.intellij.dsa.DSAUtils.less;
 
 /**
  * MergeSort 自顶向下

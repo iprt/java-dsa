@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
+import static io.intellij.dsa.DSAUtils.createRandomArray;
+import static io.intellij.dsa.DSAUtils.isIncrement;
+
 /**
  * SortHelper
  *
@@ -35,29 +38,12 @@ public class SortHelper<E extends Comparable<Integer>> implements Sort<Integer> 
         log.info("sort method = {}|size={}|sort time= {}ms", sortMethod.getClass().getSimpleName(), this.size, stopWatch.getTime());
 
         // after sort compare
-        return new SortResult(isSorted(this.array), afterSortCompare(), stopWatch.getTime());
+        return new SortResult(isIncrement(this.array), afterSortCompare(), stopWatch.getTime());
     }
 
     @Override
     public void sort(@NotNull Integer[] array) {
         this.sortMethod.sort(array);
-    }
-
-    private Integer[] createRandomArray(int size, int max) {
-        Integer[] array = new Integer[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = (int) (Math.random() * max);
-        }
-        return array;
-    }
-
-    private boolean isSorted(Integer[] array) {
-        for (int i = 0; i < array.length - 1; i++) {
-            if (array[i] > array[i + 1]) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -79,6 +65,6 @@ public class SortHelper<E extends Comparable<Integer>> implements Sort<Integer> 
         return true;
     }
 
-    public record SortResult(boolean isSorted, boolean isSame, long costMs) {
+    public record SortResult(boolean isIncrement, boolean isSame, long costMs) {
     }
 }

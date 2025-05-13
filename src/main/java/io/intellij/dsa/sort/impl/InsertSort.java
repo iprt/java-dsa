@@ -3,8 +3,8 @@ package io.intellij.dsa.sort.impl;
 import io.intellij.dsa.sort.Sort;
 import org.jetbrains.annotations.NotNull;
 
-import static io.intellij.dsa.sort.SortUtils.less;
-import static io.intellij.dsa.sort.SortUtils.swap;
+import static io.intellij.dsa.DSAUtils.less;
+import static io.intellij.dsa.DSAUtils.swap;
 
 /**
  * InsertSort 插入排序的关键是相邻的两个元素比较和交换
