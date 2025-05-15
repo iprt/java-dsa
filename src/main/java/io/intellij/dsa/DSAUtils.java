@@ -123,4 +123,17 @@ public class DSAUtils {
         return a.compareTo(b) >= 0;
     }
 
+    /**
+     * Compares two elements and determines if they are equal.
+     *
+     * @param a   the first element to compare; must not be null
+     * @param b   the second element to compare; must not be null
+     * @param <E> the type of elements being compared, which must implement {@code Comparable<E>}
+     * @return {@code true} if the two elements are equal according to their natural ordering;
+     *         {@code false} otherwise
+     */
+    public static <E extends Comparable<E>> boolean equals(@NotNull E a, @NotNull E b) {
+        return a.compareTo(b) == 0;
+    }
+
 }

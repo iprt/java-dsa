@@ -84,11 +84,13 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
     // parent index = (index - 1) / 2
     private void siftUp(int index) {
         // 当前节点 > 0 代表有父节点
-        while (index > 0 && greater(data[index], data[(index - 1) / 2])) {
+        int current = index, parent = (index - 1) / 2;
+        while (current > 0 && greater(data[current], data[parent])) {
             // 交换当前节点和父节点
-            swap(data, index, (index - 1) / 2);
+            swap(data, current, parent);
             // 更新当前节点为父节点
-            index = (index - 1) / 2;
+            current = parent;
+            parent = (current - 1) / 2;
         }
     }
 
@@ -96,8 +98,7 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
     // right child index = 2 * index + 2
     private void siftDown(int index) {
         // 能交换的前提是当前节点有子节点,直接先看左子节点
-        int current = index;
-        int left = 2 * index + 1;
+        int current = index, left = 2 * index + 1;
         while (left < count) {
             int chooseChild = left;
             if (left + 1 < count && greater(data[left + 1], data[left])) {

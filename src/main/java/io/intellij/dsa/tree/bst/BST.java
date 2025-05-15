@@ -1,7 +1,11 @@
 package io.intellij.dsa.tree.bst;
 
+import java.util.function.Consumer;
+
 /**
- * BST
+ * BST 二分搜索树
+ * <p>
+ * 节点大于等于左子树，小于右子树
  *
  * @author tech@intellij.io
  * @since 2025-05-13
@@ -18,6 +22,31 @@ public interface BST<K extends Comparable<K>, V> {
 
     void add(K key, V value);
 
-    V delete(K key);
+    BstNode<K, V> delete(K key);
 
+    boolean update(K key, V value);
+
+    V get(K key);
+
+    BstNode<K, V> getMin();
+
+    BstNode<K, V> getMax();
+
+    // 是否是二分搜索树
+    boolean isBST();
+
+    // 前序遍历，
+    // 先访问父节节点，再访问左子树，最后访问右子树
+    void preorderTraversal(Consumer<BstNode<K, V>> action);
+
+    // 中序遍历
+    // 先访问左子树，再访问父节点，最后访问右子树
+    void inorderTraversal(Consumer<BstNode<K, V>> action);
+
+    // 后序遍历
+    // 先访问左子树，再访问右子树，最后访问父节点
+    void postorderTraversal(Consumer<BstNode<K, V>> action);
+
+    // 层序遍历
+    void levelOrderTraversal(Consumer<BstNode<K, V>> action);
 }

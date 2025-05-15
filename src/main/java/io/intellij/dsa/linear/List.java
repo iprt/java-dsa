@@ -1,10 +1,10 @@
 package io.intellij.dsa.linear;
 
 /**
- * Stack
+ * List
  *
  * @author tech@intellij.io
- * @since 2025-05-12
+ * @since 2025-05-13
  */
-public interface Stack {
+public interface List {
 }

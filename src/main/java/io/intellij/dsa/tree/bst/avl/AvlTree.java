@@ -1,32 +1,11 @@
 package io.intellij.dsa.tree.bst.avl;
 
-import io.intellij.dsa.tree.bst.BST;
-
 /**
  * AvlTree
  *
  * @author tech@intellij.io
  * @since 2025-05-13
  */
-public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
-    @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
-    public int height() {
-        return 0;
-    }
-
-    @Override
-    public void add(K key, V value) {
-
-    }
-
-    @Override
-    public V delete(K key) {
-        return null;
-    }
+public class AvlTree<K extends Comparable<K>, V> {
 
 }
