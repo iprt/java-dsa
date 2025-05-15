@@ -5,8 +5,6 @@ import io.intellij.dsa.tree.bst.BST;
 import io.intellij.dsa.tree.bst.BstNode;
 import io.intellij.dsa.tree.bst.BstUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static io.intellij.dsa.DSAUtils.greater;
@@ -34,16 +32,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public int height() {
-        List<BstNode<K, V>> leafs = new ArrayList<>();
-        BstUtils.getLeafs(this.root, leafs);
-        if (leafs.isEmpty()) {
-            return 0;
-        }
-        int maxHeight = 0;
-        for (BstNode<K, V> leaf : leafs) {
-            maxHeight = Math.max(maxHeight, leaf.getHeight());
-        }
-        return maxHeight;
+        return BstUtils.getHeight(this.root);
     }
 
     @Override
@@ -94,7 +83,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
             this.count++;
             return;
         }
-        int tmpHeight = 1;
         while (tmp != null) {
             // 向左寻找
             if (less(addNode.getKey(), tmp.getKey())) {
@@ -107,7 +95,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                     break;
                 } else {
                     tmp = tmp.getLeft();
-                    tmpHeight++;
                 }
             } else if (greater(addNode.getKey(), tmp.getKey())) {
                 if (tmp.getRight() == null) {
@@ -117,7 +104,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                     break;
                 } else {
                     tmp = tmp.getRight();
-                    tmpHeight++;
                 }
             } else {
                 tmp.setValue(addNode.getValue());

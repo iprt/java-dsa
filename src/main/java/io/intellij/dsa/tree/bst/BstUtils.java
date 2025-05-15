@@ -88,4 +88,13 @@ public class BstUtils {
         getLeafs(node.getRight(), leafs);
     }
 
+    public static <K extends Comparable<K>, V> int getHeight(BstNode<K, V> node) {
+        if (node == null) {
+            return 0;
+        }
+        int leftHeight = getHeight(node.getLeft()) + 1;
+        int rightHeight = getHeight(node.getRight()) + 1;
+        return Math.max(leftHeight, rightHeight);
+    }
+
 }
