@@ -32,4 +32,19 @@ public class HeapTest {
         }
     }
 
+    @Test
+    public void testHeapify() {
+        Integer[] array = DSAUtils.createRandomArray(1000000, 1000000);
+        Integer[] copyArray = DSAUtils.copyArray(array);
+
+        MaxHeap<Integer> heap = new MaxHeap<>(array);
+        Arrays.sort(copyArray);
+        for (int i = copyArray.length - 1; i >= 0; i--) {
+            Integer max = heap.extractMax();
+            if (!max.equals(copyArray[i])) {
+                throw new RuntimeException("Heap is not sorted");
+            }
+        }
+    }
+
 }

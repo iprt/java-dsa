@@ -33,16 +33,43 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
         this(DEFAULT_CAPACITY);
     }
 
+    public MaxHeap(@NotNull T[] array) {
+        this(array.length);
+        this.heapify(array);
+    }
+
     @SuppressWarnings("unchecked")
-    public MaxHeap(int capacity) {
-        this.capacity = capacity;
+    public MaxHeap(int initCap) {
+        if (initCap < 0) {
+            throw new IllegalArgumentException("Capacity must be non-negative");
+        }
+        int realCapacity = DEFAULT_CAPACITY;
+        while (initCap > realCapacity) {
+            realCapacity = realCapacity * 2 + 1;
+        }
+
+        this.capacity = realCapacity;
+
         this.count = 0;
-        this.data = (T[]) new Comparable[capacity];
+        this.data = (T[]) new Comparable[realCapacity];
     }
 
     @Override
     public int size() {
         return this.count;
+    }
+
+    // 自下而上的堆化
+    // 这种方法从数组的最后一个非叶子节点开始，依次向前处理每个节点，对每个节点执行下沉（sift-down）操作。
+    private void heapify(T[] array) {
+        // 复制数组到堆中
+        System.arraycopy(array, 0, this.data, 0, array.length);
+        this.count = array.length;
+
+        // 从最后一个非叶子节点开始，依次向前执行下沉操作
+        for (int i = (count - 2) / 2; i >= 0; i--) {
+            siftDown(i);
+        }
     }
 
     @Override
