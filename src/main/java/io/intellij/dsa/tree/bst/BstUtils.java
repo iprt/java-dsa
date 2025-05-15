@@ -16,6 +16,29 @@ import static io.intellij.dsa.DSAUtils.less;
  */
 public class BstUtils {
 
+    public static <K extends Comparable<K>, V> BstNode<K, V> getMinOrMax(BstNode<K, V> node, boolean minOrMax) {
+        if (node == null) {
+            return null;
+        }
+        BstNode<K, V> tmp = node;
+        while (tmp != null) {
+            if (minOrMax) {
+                if (tmp.getLeft() != null) {
+                    tmp = tmp.getLeft();
+                } else {
+                    break;
+                }
+            } else {
+                if (tmp.getRight() != null) {
+                    tmp = tmp.getRight();
+                } else {
+                    break;
+                }
+            }
+        }
+        return tmp;
+    }
+
     public static <K extends Comparable<K>, V> boolean isBST(BstNode<K, V> node) {
         if (node == null) {
             return true;

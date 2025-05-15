@@ -142,7 +142,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
             // 左子树和右子树都不为空
             if (from.getLeft() != null && from.getRight() == null) {
                 // 寻找左子树最大节点
-                BstNode<K, V> leftMax = getMinOrMax(from.getLeft(), false);
+                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), false);
                 from.setKey(leftMax.getKey())
                         .setValue(leftMax.getValue());
                 // 删除 左子树最大节点
@@ -156,7 +156,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                 this.count--;
             } else if (from.getLeft() != null) {
                 // 左子树不为空，右子树为空
-                BstNode<K, V> leftMax = getMinOrMax(from.getLeft(), false);
+                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), false);
                 from.setKey(leftMax.getKey())
                         .setValue(leftMax.getValue());
                 // 删除 左子树最大节点
@@ -165,7 +165,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                 );
             } else {
                 // 左子树为空，右子树不为空
-                BstNode<K, V> rightMin = getMinOrMax(from.getRight(), true);
+                BstNode<K, V> rightMin = BstUtils.getMinOrMax(from.getRight(), true);
                 from.setKey(rightMin.getKey())
                         .setValue(rightMin.getValue());
                 // 删除 右子树最小节点
@@ -209,35 +209,12 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public BstNode<K, V> getMin() {
-        return getMinOrMax(this.root, true);
+        return BstUtils.getMinOrMax(this.root, true);
     }
 
     @Override
     public BstNode<K, V> getMax() {
-        return getMinOrMax(this.root, false);
-    }
-
-    private BstNode<K, V> getMinOrMax(BstNode<K, V> node, boolean minOrMax) {
-        if (node == null) {
-            return null;
-        }
-        BstNode<K, V> tmp = node;
-        while (tmp != null) {
-            if (minOrMax) {
-                if (tmp.getLeft() != null) {
-                    tmp = tmp.getLeft();
-                } else {
-                    break;
-                }
-            } else {
-                if (tmp.getRight() != null) {
-                    tmp = tmp.getRight();
-                } else {
-                    break;
-                }
-            }
-        }
-        return tmp;
+        return BstUtils.getMinOrMax(this.root, false);
     }
 
     @Override
