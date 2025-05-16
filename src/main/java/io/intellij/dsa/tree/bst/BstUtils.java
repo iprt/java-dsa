@@ -1,5 +1,7 @@
 package io.intellij.dsa.tree.bst;
 
+import io.intellij.dsa.DSAUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -15,6 +17,20 @@ import static io.intellij.dsa.DSAUtils.less;
  * @since 2025-05-15
  */
 public class BstUtils {
+
+    public static <K extends Comparable<K>, V> BstNode<K, V> get(BstNode<K, V> from, K key) {
+        if (from == null) {
+            return null;
+        }
+
+        if (DSAUtils.equals(from.getKey(), key)) {
+            return from;
+        } else if (less(key, from.getKey())) {
+            return get(from.getLeft(), key);
+        } else {
+            return get(from.getRight(), key);
+        }
+    }
 
     public static <K extends Comparable<K>, V> BstNode<K, V> getMinOrMax(BstNode<K, V> node, boolean minOrMax) {
         if (node == null) {

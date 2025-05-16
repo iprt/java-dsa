@@ -55,6 +55,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
             } else {
                 rtNode.setHeight(parent.getHeight() + 1);
             }
+            rtNode.setParent(parent);
             this.count++;
             return rtNode;
         }
@@ -114,7 +115,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public BstNode<K, V> delete(K key) {
-        BstNode<K, V> targetNode = get(root, key);
+        BstNode<K, V> targetNode = BstUtils.get(root, key);
         if (targetNode == null) {
             return null;
         }
@@ -180,7 +181,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public boolean update(K key, V value) {
-        BstNode<K, V> find = get(root, key);
+        BstNode<K, V> find = BstUtils.get(this.root, key);
         if (find == null) {
             return false;
         }
@@ -190,21 +191,8 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public V get(K key) {
-        return null;
-    }
-
-    BstNode<K, V> get(BstNode<K, V> from, K key) {
-        if (from == null) {
-            return null;
-        }
-
-        if (DSAUtils.equals(from.getKey(), key)) {
-            return from;
-        } else if (less(key, from.getKey())) {
-            return get(from.getLeft(), key);
-        } else {
-            return get(from.getRight(), key);
-        }
+        BstNode<K, V> find = BstUtils.get(this.root, key);
+        return find == null ? null : find.getValue();
     }
 
     @Override

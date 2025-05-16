@@ -9,14 +9,15 @@ import io.intellij.dsa.tree.bst.BstNode;
  * @since 2025-05-13
  */
 public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
-    private K key;
-    private V value;
+    protected K key;
+    protected V value;
 
-    private BstNode<K, V> parent;
-    private BstNode<K, V> left;
-    private BstNode<K, V> right;
+    protected BstNode<K, V> parent;
+    protected BstNode<K, V> left;
+    protected BstNode<K, V> right;
 
-    private int height;
+    // 距离根节点的高度
+    protected int height;
 
     public BasicNode(K key, V value) {
         this.key = key;
