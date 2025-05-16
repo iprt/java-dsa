@@ -5,7 +5,7 @@ import io.intellij.dsa.tree.bst.BST;
 import io.intellij.dsa.tree.bst.BstNode;
 import io.intellij.dsa.tree.bst.BstUtils;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import static io.intellij.dsa.DSAUtils.greater;
 import static io.intellij.dsa.DSAUtils.less;
@@ -31,6 +31,11 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
+    public BstNode<K, V> getRoot() {
+        return this.root;
+    }
+
+    @Override
     public int height() {
         return BstUtils.getHeight(this.root);
     }
@@ -50,11 +55,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                                BstNode<K, V> parent, int height) {
         if (node == null) {
             BstNode<K, V> rtNode = new BasicNode<>(k, v);
-            if (parent == null) {
-                rtNode.setHeight(1);
-            } else {
-                rtNode.setHeight(parent.getHeight() + 1);
-            }
             rtNode.setParent(parent);
             this.count++;
             return rtNode;
@@ -80,7 +80,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
         if (tmp == null) {
             this.root = addNode;
             addNode.setParent(null);
-            addNode.setHeight(1);
             this.count++;
             return;
         }
@@ -90,8 +89,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
                 if (tmp.getLeft() == null) {
                     tmp.setLeft(addNode);
                     addNode.setParent(tmp);
-                    addNode.setHeight(tmp.getHeight() + 1);
-
                     this.count++;
                     break;
                 } else {
@@ -114,13 +111,14 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public BstNode<K, V> delete(K key) {
+    public V delete(K key) {
         BstNode<K, V> targetNode = BstUtils.get(root, key);
         if (targetNode == null) {
             return null;
         }
+        V value = targetNode.getValue();
         this.root = delete(this.root, key);
-        return targetNode;
+        return value;
     }
 
     /**
@@ -135,48 +133,42 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
             return null;
         }
         if (less(key, from.getKey())) {
-            from.setLeft(delete(from.getLeft(), key));
+            return from.setLeft(delete(from.getLeft(), key));
         } else if (greater(key, from.getKey())) {
-            from.setRight(delete(from.getRight(), key));
+            return from.setRight(delete(from.getRight(), key));
         } else {
             // 找到要删除的节点 并判断左右子树的情况
-            // 左子树和右子树都不为空
-            if (from.getLeft() != null && from.getRight() == null) {
-                // 寻找左子树最大节点
-                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), false);
-                from.setKey(leftMax.getKey())
-                        .setValue(leftMax.getValue());
-                // 删除 左子树最大节点
-                from.setLeft(
-                        delete(from.getLeft(), leftMax.getKey())
-                );
-            } else if (from.getLeft() == null && from.getRight() == null) {
-                // 左子树和右子树都为空
+
+            // 左子树和右子树都为空
+            if (from.getLeft() == null && from.getRight() == null) {
                 // 理解: 真正的删除操作就是替换和删除叶子节点
-                from = null;
                 this.count--;
-            } else if (from.getLeft() != null) {
-                // 左子树不为空，右子树为空
-                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), false);
-                from.setKey(leftMax.getKey())
-                        .setValue(leftMax.getValue());
-                // 删除 左子树最大节点
-                from.setLeft(
+                return null;
+            }
+
+            // 剩余情况 左子树 和 右子树一定有一个不为空
+            // 左子树不为空
+            if (from.getLeft() != null) {
+                // 寻找左子树最大节点
+                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), BstUtils.Type.MAX);
+                from.setKey(leftMax.getKey()).setValue(leftMax.getValue());
+
+                return from.setLeft(
                         delete(from.getLeft(), leftMax.getKey())
                 );
-            } else {
-                // 左子树为空，右子树不为空
-                BstNode<K, V> rightMin = BstUtils.getMinOrMax(from.getRight(), true);
-                from.setKey(rightMin.getKey())
-                        .setValue(rightMin.getValue());
-                // 删除 右子树最小节点
-                from.setRight(
+            }
+
+            // 右子树不为空
+            if (from.getRight() != null) {
+                BstNode<K, V> rightMin = BstUtils.getMinOrMax(from.getRight(), BstUtils.Type.MIN);
+                from.setKey(rightMin.getKey()).setValue(rightMin.getValue());
+                return from.setRight(
                         delete(from.getRight(), rightMin.getKey())
                 );
             }
+
         }
-        // 返回节点本身
-        return from;
+        throw new IllegalStateException("Unreachable");
     }
 
     @Override
@@ -197,12 +189,12 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
 
     @Override
     public BstNode<K, V> getMin() {
-        return BstUtils.getMinOrMax(this.root, true);
+        return BstUtils.getMinOrMax(this.root, BstUtils.Type.MIN);
     }
 
     @Override
     public BstNode<K, V> getMax() {
-        return BstUtils.getMinOrMax(this.root, false);
+        return BstUtils.getMinOrMax(this.root, BstUtils.Type.MAX);
     }
 
     @Override
@@ -211,7 +203,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public void preorderTraversal(Consumer<BstNode<K, V>> action) {
+    public void preorderTraversal(BiConsumer<K, V> action) {
         if (action == null) {
             return;
         }
@@ -219,7 +211,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public void inorderTraversal(Consumer<BstNode<K, V>> action) {
+    public void inorderTraversal(BiConsumer<K, V> action) {
         if (action == null) {
             return;
         }
@@ -227,7 +219,7 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public void postorderTraversal(Consumer<BstNode<K, V>> action) {
+    public void postorderTraversal(BiConsumer<K, V> action) {
         if (action == null) {
             return;
         }
@@ -235,10 +227,11 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public void levelOrderTraversal(Consumer<BstNode<K, V>> action) {
+    public void levelOrderTraversal(BiConsumer<K, V> action) {
         if (action == null) {
             return;
         }
         BstUtils.levelOrderTraversal(action, this.root);
     }
+
 }

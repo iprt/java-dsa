@@ -51,18 +51,9 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     }
 
     @Override
-    public int getHeight() {
-        return this.height;
-    }
-
-    @Override
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    @Override
-    public void setParent(BstNode<K, V> parent) {
+    public BstNode<K, V> setParent(BstNode<K, V> parent) {
         this.parent = parent;
+        return this;
     }
 
     @Override

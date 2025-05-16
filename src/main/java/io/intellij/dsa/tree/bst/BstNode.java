@@ -16,11 +16,7 @@ public interface BstNode<K extends Comparable<K>, V> {
 
     BstNode<K, V> setValue(V value);
 
-    int getHeight();
-
-    void setHeight(int height);
-
-    void setParent(BstNode<K, V> parent);
+    BstNode<K, V> setParent(BstNode<K, V> parent);
 
     BstNode<K, V> getParent();
 

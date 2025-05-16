@@ -1,6 +1,7 @@
 package io.intellij.dsa.tree;
 
 import io.intellij.dsa.tree.bst.BST;
+import io.intellij.dsa.tree.bst.BstUtils;
 import io.intellij.dsa.tree.bst.avl.AvlTree;
 import io.intellij.dsa.tree.bst.basic.BasicBST;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ public class BSTTest {
         }
         System.out.println("bst.size() = " + bst.size() + ";" + " bst.height() = " + bst.height());
         for (Integer i : arr) {
-            bst.delete(i);
+            System.out.println(bst.delete(i));
         }
         System.out.println("bst.size() = " + bst.size() + ";" + " bst.height() = " + bst.height());
     }
@@ -75,6 +76,23 @@ public class BSTTest {
             avl.add(i, i);
         }
         System.out.println(avl);
+    }
+
+    @Test
+    public void testAvlDelete() {
+        Integer[] add = {1, 2, 3, 4, 5, 6, 7};
+        Integer[] delete = {1, 2, 3};
+
+        BST<Integer, Integer> avl = new AvlTree<>();
+        for (Integer i : add) {
+            avl.add(i, i);
+        }
+        System.out.println(avl);
+
+        for (Integer i : delete) {
+            avl.delete(i);
+            BstUtils.printTree(avl.getRoot());
+        }
     }
 
 }

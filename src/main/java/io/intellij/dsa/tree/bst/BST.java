@@ -1,5 +1,6 @@
 package io.intellij.dsa.tree.bst;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -18,11 +19,13 @@ public interface BST<K extends Comparable<K>, V> {
         return this.size() == 0;
     }
 
+    BstNode<K, V> getRoot();
+
     int height();
 
     void add(K key, V value);
 
-    BstNode<K, V> delete(K key);
+    V delete(K key);
 
     boolean update(K key, V value);
 
@@ -37,16 +40,16 @@ public interface BST<K extends Comparable<K>, V> {
 
     // 前序遍历，
     // 先访问父节节点，再访问左子树，最后访问右子树
-    void preorderTraversal(Consumer<BstNode<K, V>> action);
+    void preorderTraversal(BiConsumer<K, V> action);
 
     // 中序遍历
     // 先访问左子树，再访问父节点，最后访问右子树
-    void inorderTraversal(Consumer<BstNode<K, V>> action);
+    void inorderTraversal(BiConsumer<K, V> action);
 
     // 后序遍历
     // 先访问左子树，再访问右子树，最后访问父节点
-    void postorderTraversal(Consumer<BstNode<K, V>> action);
+    void postorderTraversal(BiConsumer<K, V> action);
 
     // 层序遍历
-    void levelOrderTraversal(Consumer<BstNode<K, V>> action);
+    void levelOrderTraversal(BiConsumer<K, V> action);
 }
