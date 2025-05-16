@@ -36,11 +36,6 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     @Override
-    public int height() {
-        return BstUtils.getHeight(this.root);
-    }
-
-    @Override
     public void add(K key, V value) {
         recursiveAdd(key, value);
     }
@@ -171,67 +166,5 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
         throw new IllegalStateException("Unreachable");
     }
 
-    @Override
-    public boolean update(K key, V value) {
-        BstNode<K, V> find = BstUtils.get(this.root, key);
-        if (find == null) {
-            return false;
-        }
-        find.setValue(value);
-        return true;
-    }
-
-    @Override
-    public V get(K key) {
-        BstNode<K, V> find = BstUtils.get(this.root, key);
-        return find == null ? null : find.getValue();
-    }
-
-    @Override
-    public BstNode<K, V> getMin() {
-        return BstUtils.getMinOrMax(this.root, BstUtils.Type.MIN);
-    }
-
-    @Override
-    public BstNode<K, V> getMax() {
-        return BstUtils.getMinOrMax(this.root, BstUtils.Type.MAX);
-    }
-
-    @Override
-    public boolean isBST() {
-        return BstUtils.isBST(this.root);
-    }
-
-    @Override
-    public void preorderTraversal(BiConsumer<K, V> action) {
-        if (action == null) {
-            return;
-        }
-        BstUtils.preorderTraversal(action, this.root);
-    }
-
-    @Override
-    public void inorderTraversal(BiConsumer<K, V> action) {
-        if (action == null) {
-            return;
-        }
-        BstUtils.inorderTraversal(action, this.root);
-    }
-
-    @Override
-    public void postorderTraversal(BiConsumer<K, V> action) {
-        if (action == null) {
-            return;
-        }
-        BstUtils.postorderTraversal(action, this.root);
-    }
-
-    @Override
-    public void levelOrderTraversal(BiConsumer<K, V> action) {
-        if (action == null) {
-            return;
-        }
-        BstUtils.levelOrderTraversal(action, this.root);
-    }
 
 }

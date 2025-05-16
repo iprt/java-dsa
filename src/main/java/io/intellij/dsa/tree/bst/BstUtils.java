@@ -76,7 +76,7 @@ public class BstUtils {
     }
 
     public static <K extends Comparable<K>, V> void preorderTraversal(BiConsumer<K, V> action, BstNode<K, V> node) {
-        if (node == null) {
+        if (action == null || node == null) {
             return;
         }
         action.accept(node.getKey(), node.getValue());
@@ -86,7 +86,7 @@ public class BstUtils {
 
 
     public static <K extends Comparable<K>, V> void inorderTraversal(BiConsumer<K, V> action, BstNode<K, V> node) {
-        if (node == null) {
+        if (action == null || node == null) {
             return;
         }
         inorderTraversal(action, node.getLeft());
@@ -95,7 +95,7 @@ public class BstUtils {
     }
 
     public static <K extends Comparable<K>, V> void postorderTraversal(BiConsumer<K, V> action, BstNode<K, V> node) {
-        if (node == null) {
+        if (action == null || node == null) {
             return;
         }
         postorderTraversal(action, node.getLeft());
@@ -104,7 +104,7 @@ public class BstUtils {
     }
 
     public static <K extends Comparable<K>, V> void levelOrderTraversal(BiConsumer<K, V> action, BstNode<K, V> node) {
-        if (node == null) {
+        if (action == null || node == null) {
             return;
         }
         Queue<BstNode<K, V>> queue = new LinkedList<>();
