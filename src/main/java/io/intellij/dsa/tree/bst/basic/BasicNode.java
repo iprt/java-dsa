@@ -16,7 +16,7 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     protected BstNode<K, V> left;
     protected BstNode<K, V> right;
 
-    // 距离根节点的高度
+    // 当前节点构成的树的高度
     protected int height;
 
     public BasicNode(K key, V value) {
@@ -25,7 +25,18 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
         this.parent = null;
         this.left = null;
         this.right = null;
-        this.height = 0;
+        this.height = DEFAULT_HEIGHT;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.height;
+    }
+
+    @Override
+    public BstNode<K, V> setHeight(int height) {
+        this.height = height;
+        return this;
     }
 
     @Override
@@ -40,19 +51,13 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     }
 
     @Override
-    public BstNode<K, V> setValue(V value) {
-        this.value = value;
-        return this;
-    }
-
-    @Override
     public V getValue() {
         return this.value;
     }
 
     @Override
-    public BstNode<K, V> setParent(BstNode<K, V> parent) {
-        this.parent = parent;
+    public BstNode<K, V> setValue(V value) {
+        this.value = value;
         return this;
     }
 
@@ -62,9 +67,9 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     }
 
     @Override
-    public BstNode<K, V> setLeft(BstNode<K, V> left) {
-        this.left = left;
-        return this;
+    public BstNode<K, V> setParent(BstNode<K, V> parent) {
+        this.parent = parent;
+        return this.parent;
     }
 
     @Override
@@ -73,8 +78,8 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     }
 
     @Override
-    public BstNode<K, V> setRight(BstNode<K, V> right) {
-        this.right = right;
+    public BstNode<K, V> setLeft(BstNode<K, V> left) {
+        this.left = left;
         return this;
     }
 
@@ -82,4 +87,11 @@ public class BasicNode<K extends Comparable<K>, V> implements BstNode<K, V> {
     public BstNode<K, V> getRight() {
         return this.right;
     }
+
+    @Override
+    public BstNode<K, V> setRight(BstNode<K, V> right) {
+        this.right = right;
+        return this;
+    }
+
 }

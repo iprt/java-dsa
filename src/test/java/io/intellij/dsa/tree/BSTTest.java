@@ -1,10 +1,11 @@
 package io.intellij.dsa.tree;
 
 import io.intellij.dsa.tree.bst.BST;
-import io.intellij.dsa.tree.bst.BstUtils;
 import io.intellij.dsa.tree.bst.avl.AvlTree;
 import io.intellij.dsa.tree.bst.basic.BasicBST;
 import org.junit.jupiter.api.Test;
+
+import static io.intellij.dsa.tree.bst.BstUtils.printTree;
 
 /**
  * BSTTest
@@ -30,10 +31,11 @@ public class BSTTest {
 
     @Test
     public void testAVL() {
-        Integer[] arr = {1, 2, 3, 4, 5, 6, 7};
+        Integer[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         BST<Integer, Integer> avl = new AvlTree<>();
         for (Integer i : arr) {
             avl.add(i, i);
+            printTree(avl.getRoot());
         }
         System.out.println(avl);
     }
@@ -44,6 +46,7 @@ public class BSTTest {
         BST<Integer, Integer> avl = new AvlTree<>();
         for (Integer i : arr) {
             avl.add(i, i);
+            printTree(avl.getRoot());
         }
         System.out.println(avl);
     }
@@ -54,6 +57,7 @@ public class BSTTest {
         BST<Integer, Integer> avl = new AvlTree<>();
         for (Integer i : arr) {
             avl.add(i, i);
+            printTree(avl.getRoot());
         }
         System.out.println(avl);
     }
@@ -64,6 +68,7 @@ public class BSTTest {
         BST<Integer, Integer> avl = new AvlTree<>();
         for (Integer i : arr) {
             avl.add(i, i);
+            printTree(avl.getRoot());
         }
         System.out.println(avl);
     }
@@ -91,7 +96,7 @@ public class BSTTest {
 
         for (Integer i : delete) {
             avl.delete(i);
-            BstUtils.printTree(avl.getRoot());
+            printTree(avl.getRoot());
         }
     }
 

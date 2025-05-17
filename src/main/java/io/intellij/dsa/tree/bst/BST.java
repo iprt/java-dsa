@@ -21,7 +21,7 @@ public interface BST<K extends Comparable<K>, V> {
     BstNode<K, V> getRoot();
 
     default int height() {
-        return BstUtils.getHeight(getRoot());
+        return BstUtils.getNodeHeight(getRoot());
     }
 
     void add(K key, V value);

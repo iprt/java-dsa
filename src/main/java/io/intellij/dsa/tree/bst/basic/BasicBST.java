@@ -5,8 +5,6 @@ import io.intellij.dsa.tree.bst.BST;
 import io.intellij.dsa.tree.bst.BstNode;
 import io.intellij.dsa.tree.bst.BstUtils;
 
-import java.util.function.BiConsumer;
-
 import static io.intellij.dsa.DSAUtils.greater;
 import static io.intellij.dsa.DSAUtils.less;
 
@@ -41,35 +39,36 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
     }
 
     void recursiveAdd(K k, V v) {
-        this.root = this.recursiveAdd(this.root, k, v, null, 1);
+        this.root = this.recursiveAdd(this.root, k, v, null);
     }
 
     // 基于插入的节点，返回插入的节点
     // 在递归的过程中，节点被创建和连接
     BstNode<K, V> recursiveAdd(BstNode<K, V> node, K k, V v,
-                               BstNode<K, V> parent, int height) {
+                               BstNode<K, V> parent) {
         if (node == null) {
-            BstNode<K, V> rtNode = new BasicNode<>(k, v);
-            rtNode.setParent(parent);
             this.count++;
-            return rtNode;
+            return new BasicNode<>(k, v).setParent(parent);
         }
         // 如果key相等，直接更新值
         if (DSAUtils.equals(node.getKey(), k)) {
             return node.setValue(v);
         } else if (less(k, node.getKey())) {
-            return node.setLeft(recursiveAdd(node.getLeft(), k, v, node, height + 1));
+            return node.setLeft(recursiveAdd(node.getLeft(), k, v, node))
+                    .refreshHeight();
         } else {
-            return node.setRight(recursiveAdd(node.getRight(), k, v, node, height + 1));
+            return node.setRight(recursiveAdd(node.getRight(), k, v, node)
+                    .refreshHeight());
         }
     }
 
+    @Deprecated
     void whileAdd(K k, V v) {
         BstNode<K, V> node = new BasicNode<>(k, v);
         this.whileAdd(node);
     }
 
-    // 插入的操作一定是插入在叶子节点上
+    @Deprecated
     void whileAdd(BstNode<K, V> addNode) {
         BstNode<K, V> tmp = this.root;
         if (tmp == null) {
@@ -135,36 +134,30 @@ public class BasicBST<K extends Comparable<K>, V> implements BST<K, V> {
             // 找到要删除的节点 并判断左右子树的情况
 
             // 左子树和右子树都为空
-            if (from.getLeft() == null && from.getRight() == null) {
+            BstNode<K, V> left = from.getLeft();
+            BstNode<K, V> right = from.getRight();
+            if (left == null && right == null) {
                 // 理解: 真正的删除操作就是替换和删除叶子节点
                 this.count--;
                 return null;
             }
 
             // 剩余情况 左子树 和 右子树一定有一个不为空
-            // 左子树不为空
-            if (from.getLeft() != null) {
-                // 寻找左子树最大节点
-                BstNode<K, V> leftMax = BstUtils.getMinOrMax(from.getLeft(), BstUtils.Type.MAX);
-                from.setKey(leftMax.getKey()).setValue(leftMax.getValue());
-
-                return from.setLeft(
-                        delete(from.getLeft(), leftMax.getKey())
-                );
-            }
-
-            // 右子树不为空
-            if (from.getRight() != null) {
-                BstNode<K, V> rightMin = BstUtils.getMinOrMax(from.getRight(), BstUtils.Type.MIN);
+            if (left != null) {
+                // 左子树不为空
+                BstNode<K, V> leftMax = BstUtils.getMinOrMax(left, BstUtils.Type.MAX);
+                return from.setKey(leftMax.getKey()).setValue(leftMax.getValue())
+                        .setLeft(delete(left, leftMax.getKey()))
+                        .refreshHeight();
+            } else {
+                // 右子树不为空
+                BstNode<K, V> rightMin = BstUtils.getMinOrMax(right, BstUtils.Type.MIN);
                 from.setKey(rightMin.getKey()).setValue(rightMin.getValue());
                 return from.setRight(
-                        delete(from.getRight(), rightMin.getKey())
-                );
+                        delete(right, rightMin.getKey())
+                ).refreshHeight();
             }
-
         }
-        throw new IllegalStateException("Unreachable");
     }
-
 
 }

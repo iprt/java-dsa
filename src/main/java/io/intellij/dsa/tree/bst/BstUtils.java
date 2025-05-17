@@ -18,7 +18,6 @@ import static io.intellij.dsa.DSAUtils.less;
  * @since 2025-05-15
  */
 public class BstUtils {
-
     public static <K extends Comparable<K>, V> BstNode<K, V> get(BstNode<K, V> from, K key) {
         if (from == null) {
             return null;
@@ -31,6 +30,13 @@ public class BstUtils {
         } else {
             return get(from.getRight(), key);
         }
+    }
+
+    public static <K extends Comparable<K>, V> int getNodeHeight(BstNode<K, V> node) {
+        if (node == null) {
+            return BstNode.DEFAULT_HEIGHT - 1;
+        }
+        return node.getHeight();
     }
 
     public static <K extends Comparable<K>, V> BstNode<K, V> getMinOrMax(BstNode<K, V> node, @NotNull BstUtils.Type type) {
@@ -149,53 +155,89 @@ public class BstUtils {
         }
 
         int height = getHeight(root);
-        int width = (int) Math.pow(2, height) - 1;
-        String[][] matrix = new String[height * 2 - 1][width];
+        int rows = height * 2;
+        int cols = (int) Math.pow(2, height + 1) - 1;
+
+        String[][] matrix = new String[rows][cols];
 
         // 初始化矩阵
         for (String[] row : matrix) {
             java.util.Arrays.fill(row, " ");
         }
 
-        fillMatrix(matrix, root, 0, 0, width - 1);
+        // 填充矩阵
+        fillMatrixSimplified(matrix, root, 0, 0, cols - 1);
 
-        // 打印矩阵
+        // 打印矩阵，跳过全空行
         for (String[] row : matrix) {
+            boolean hasContent = false;
             for (String cell : row) {
-                System.out.print(cell);
+                if (!cell.equals(" ")) {
+                    hasContent = true;
+                    break;
+                }
             }
-            System.out.println();
+
+            if (hasContent) {
+                for (String cell : row) {
+                    System.out.print(cell);
+                }
+                System.out.println();
+            }
         }
     }
 
-    private static <K extends Comparable<K>, V> void fillMatrix(String[][] matrix, BstNode<K, V> node,
-                                                                int row, int left, int right) {
-        if (node == null) {
+    private static <K extends Comparable<K>, V> void fillMatrixSimplified(String[][] matrix,
+                                                                          BstNode<K, V> node,
+                                                                          int row,
+                                                                          int left,
+                                                                          int right) {
+        if (node == null || row >= matrix.length) {
             return;
         }
 
         int mid = (left + right) / 2;
 
-        // 将节点值放入矩阵
-        matrix[row][mid] = String.valueOf(node.getKey());
+        // 放置当前节点
+        if (mid >= 0 && mid < matrix[0].length) {
+            matrix[row][mid] = String.valueOf(node.getKey());
+        }
+
+        // 间隔行用于放置连接线
+        int nextRow = row + 2;
 
         // 处理左子树
         if (node.getLeft() != null) {
-            // 绘制连接线
-            for (int i = 1; i <= (mid - left) / 2; i++) {
-                matrix[row + i][mid - i] = "/";
+            // 计算左子节点的位置
+            int leftChildMid = (left + mid - 1) / 2;
+
+            // 绘制简化连接线 (只在中间位置放一个/)
+            if (row + 1 < matrix.length) {
+                int connectorPos = (mid + leftChildMid) / 2;
+                if (connectorPos >= 0 && connectorPos < matrix[0].length) {
+                    matrix[row + 1][connectorPos] = "/";
+                }
             }
-            fillMatrix(matrix, node.getLeft(), row + (mid - left) / 2 + 1, left, mid - 1);
+
+            // 递归填充左子树
+            fillMatrixSimplified(matrix, node.getLeft(), nextRow, left, mid - 1);
         }
 
         // 处理右子树
         if (node.getRight() != null) {
-            // 绘制连接线
-            for (int i = 1; i <= (right - mid) / 2; i++) {
-                matrix[row + i][mid + i] = "\\";
+            // 计算右子节点的位置
+            int rightChildMid = (mid + 1 + right) / 2;
+
+            // 绘制简化连接线 (只在中间位置放一个\)
+            if (row + 1 < matrix.length) {
+                int connectorPos = (mid + rightChildMid) / 2;
+                if (connectorPos >= 0 && connectorPos < matrix[0].length) {
+                    matrix[row + 1][connectorPos] = "\\";
+                }
             }
-            fillMatrix(matrix, node.getRight(), row + (right - mid) / 2 + 1, mid + 1, right);
+
+            // 递归填充右子树
+            fillMatrixSimplified(matrix, node.getRight(), nextRow, mid + 1, right);
         }
     }
-
 }

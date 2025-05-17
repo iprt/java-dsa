@@ -4,14 +4,12 @@ import io.intellij.dsa.DSAUtils;
 import io.intellij.dsa.tree.bst.BST;
 import io.intellij.dsa.tree.bst.BstNode;
 import io.intellij.dsa.tree.bst.BstUtils;
+import io.intellij.dsa.tree.bst.basic.BasicNode;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.function.BiConsumer;
 
 import static io.intellij.dsa.DSAUtils.greater;
 import static io.intellij.dsa.DSAUtils.less;
-import static io.intellij.dsa.tree.bst.avl.AvlNode.getBalanceFactor;
-import static io.intellij.dsa.tree.bst.avl.AvlNode.getNodeMaxDistanceToLeaf;
+import static io.intellij.dsa.tree.bst.BstUtils.getNodeHeight;
 
 /**
  * AvlTree
@@ -34,6 +32,11 @@ public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
         return this.root;
     }
 
+    private int getBalanceFactor(BstNode<K, V> node) {
+        if (node == null) return 0;
+        return getNodeHeight(node.getLeft()) - getNodeHeight(node.getRight());
+    }
+
     @Override
     public void add(K key, V value) {
         this.root = this.recursiveAdd(this.root, key, value, null);
@@ -43,7 +46,7 @@ public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
     // 在递归的过程中，节点被创建和连接
     BstNode<K, V> recursiveAdd(BstNode<K, V> node, K k, V v, BstNode<K, V> parent) {
         if (node == null) {
-            BstNode<K, V> rtNode = new AvlNode<>(k, v);
+            BstNode<K, V> rtNode = new BasicNode<>(k, v);
             rtNode.setParent(parent);
             this.count++;
             return rtNode;
@@ -59,12 +62,8 @@ public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
         } else {
             node.setRight(recursiveAdd(node.getRight(), k, v, node));
         }
-
-        ((AvlNode<K, V>) node).setMaxDistanceToLeaf(
-                Math.max(getNodeMaxDistanceToLeaf(node.getLeft()), getNodeMaxDistanceToLeaf(node.getRight())) + 1
-        );
-
-        int balanceFactor = getBalanceFactor(node);
+        // 重新递归设置节点的高度
+        int balanceFactor = getBalanceFactor(node.refreshHeight());
         return this.rebalance(node, balanceFactor, Action.ADD);
     }
 
@@ -167,39 +166,32 @@ public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
             // 找到要删除的节点
             BstNode<K, V> left = node.getLeft();
             BstNode<K, V> right = node.getRight();
-            if (left != null && right != null) {
-                // 左右子树都不为空
-                BstNode<K, V> rightMin = BstUtils.getMinOrMax(node.getRight(), BstUtils.Type.MIN);
-                node.setKey(rightMin.getKey()).setValue(rightMin.getValue());
-                node.setRight(
-                        delete(node.getRight(), rightMin.getKey()));
-            } else if (left == null && right == null) {
-                // real delete 左右子树都为空 replace then delete
+
+            if (left == null && right == null) {
+                // 真正删除的节点是叶子节点
                 this.count--;
                 return null;
-            } else if (left != null) {
-                // 左子树不为空，右子树为空
-                BstNode<K, V> leftMax = BstUtils.getMinOrMax(node.getLeft(), BstUtils.Type.MAX);
-                node.setKey(leftMax.getKey()).setValue(leftMax.getValue());
-                node.setLeft(
-                        delete(node.getLeft(), leftMax.getKey())
-                );
-            } else {
-                // 左子树为空，右子树不为空
+            }
+
+            if (left != null) {
                 BstNode<K, V> rightMin = BstUtils.getMinOrMax(node.getRight(), BstUtils.Type.MIN);
                 node.setKey(rightMin.getKey()).setValue(rightMin.getValue());
+
                 node.setRight(
                         delete(node.getRight(), rightMin.getKey())
                 );
+            } else {
+                BstNode<K, V> leftMax = BstUtils.getMinOrMax(node.getLeft(), BstUtils.Type.MAX);
+                node.setKey(leftMax.getKey()).setValue(leftMax.getValue());
+
+                node.setLeft(
+                        delete(node.getLeft(), leftMax.getKey())
+                );
             }
         }
-        // 重新计算节点的 MaxDistanceToLeaf
-        ((AvlNode<K, V>) node).setMaxDistanceToLeaf(
-                Math.max(getNodeMaxDistanceToLeaf(node.getLeft()), getNodeMaxDistanceToLeaf(node.getRight())) + 1
-        );
-        int balanceFactor = getBalanceFactor(node);
-        node = this.rebalance(node, balanceFactor, Action.DEL);
-        return node;
+        // 递归回溯
+        int balanceFactor = node.refreshHeight().getBalanceFactor();
+        return this.rebalance(node, balanceFactor, Action.DEL);
     }
 
     private enum Action {
