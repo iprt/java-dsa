@@ -190,7 +190,7 @@ public class AvlTree<K extends Comparable<K>, V> implements BST<K, V> {
             }
         }
         // 递归回溯
-        int balanceFactor = node.refreshHeight().getBalanceFactor();
+        int balanceFactor = getBalanceFactor(node.refreshHeight());
         return this.rebalance(node, balanceFactor, Action.DEL);
     }
 

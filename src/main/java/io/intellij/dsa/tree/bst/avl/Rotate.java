@@ -96,7 +96,6 @@ class Rotate {
         );
         // 旋转后，node的右子树变成了x，node的高度也需要更新
         node.refreshHeight();
-
         // 旋转node
         return rotateNodeAndRight(node);
     }

@@ -44,9 +44,4 @@ public interface BstNode<K extends Comparable<K>, V> {
         return this.setHeight(Math.max(getNodeHeight(getLeft()), getNodeHeight(getRight())) + 1);
     }
 
-    // 获取当前节点的平衡因子
-    default int getBalanceFactor() {
-        return getNodeHeight(getLeft()) - getNodeHeight(getRight());
-    }
-
 }
