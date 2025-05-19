@@ -11,6 +11,7 @@ import java.util.Spliterators;
 import java.util.function.Consumer;
 
 import static io.intellij.dsa.DSAUtils.greater;
+import static io.intellij.dsa.DSAUtils.less;
 import static io.intellij.dsa.DSAUtils.swap;
 
 /**
@@ -22,27 +23,33 @@ import static io.intellij.dsa.DSAUtils.swap;
  * @since 2025-05-13
  */
 @Slf4j
-public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
+public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
     private static final int DEFAULT_CAPACITY = 7;
+    private final Type type;
 
     private T[] data;
     private int count;
     private int capacity;
 
-    public MaxHeap() {
-        this(DEFAULT_CAPACITY);
+    public HeapImpl() {
+        this(DEFAULT_CAPACITY, Type.MIN);
     }
 
-    public MaxHeap(@NotNull T[] array) {
-        this(array.length);
+    public HeapImpl(Type type) {
+        this(DEFAULT_CAPACITY, type);
+    }
+
+    public HeapImpl(@NotNull T[] array, Type type) {
+        this(array.length, type);
         this.heapify(array);
     }
 
     @SuppressWarnings("unchecked")
-    public MaxHeap(int initCap) {
+    public HeapImpl(int initCap, Type type) {
         if (initCap < 0) {
             throw new IllegalArgumentException("Capacity must be non-negative");
         }
+        this.type = Objects.requireNonNullElse(type, Type.MIN);
         int realCapacity = DEFAULT_CAPACITY;
         while (initCap > realCapacity) {
             realCapacity = realCapacity * 2 + 1;
@@ -83,7 +90,7 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
 
 
     @Override
-    public T extractMax() {
+    public T extract() {
         if (this.count == 0) {
             return null;
         }
@@ -101,18 +108,23 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
     }
 
     @Override
-    public T getMax() {
+    public T get() {
         if (this.count == 0) {
             return null;
         }
         return data[0];
     }
 
+    @Override
+    public Type getType() {
+        return this.type;
+    }
+
     // parent index = (index - 1) / 2
     private void siftUp(int index) {
         // 当前节点 > 0 代表有父节点
         int current = index, parent = (index - 1) / 2;
-        while (current > 0 && greater(data[current], data[parent])) {
+        while (current > 0 && elementCompare(data[current], data[parent])) {
             // 交换当前节点和父节点
             swap(data, current, parent);
             // 更新当前节点为父节点
@@ -128,12 +140,12 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
         int current = index, left = 2 * index + 1;
         while (left < count) {
             int chooseChild = left;
-            if (left + 1 < count && greater(data[left + 1], data[left])) {
+            if (left + 1 < count && elementCompare(data[left + 1], data[left])) {
                 // left + 1 < count 存在右子节点
                 // 右子节点大于左子节点
                 chooseChild = left + 1;
             }
-            if (greater(data[chooseChild], data[current])) {
+            if (elementCompare(data[chooseChild], data[current])) {
                 // 子节点的值大于当前节点,交换当前节点和子节点
                 swap(data, chooseChild, current);
                 // 更新当前节点为子节点
@@ -143,6 +155,14 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
                 // 当前节点大于子节点
                 break;
             }
+        }
+    }
+
+    private boolean elementCompare(T a, T b) {
+        if (this.type == Type.MAX) {
+            return greater(a, b);
+        } else {
+            return less(a, b);
         }
     }
 
@@ -157,7 +177,6 @@ public class MaxHeap<T extends Comparable<T>> implements Heap<T> {
         log.info("expand heap from {} to {}", this.capacity, newCapacity);
         this.data = newData;
         this.capacity = newCapacity;
-
     }
 
     // 缩容

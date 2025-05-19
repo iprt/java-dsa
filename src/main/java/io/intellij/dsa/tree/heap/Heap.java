@@ -8,6 +8,11 @@ package io.intellij.dsa.tree.heap;
  */
 public interface Heap<T extends Comparable<T>> extends Iterable<T> {
 
+    enum Type {
+        MAX,
+        MIN
+    }
+
     int size();
 
     default boolean isEmpty() {
@@ -16,7 +21,10 @@ public interface Heap<T extends Comparable<T>> extends Iterable<T> {
 
     void add(T element);
 
-    T extractMax();
+    T extract();
 
-    T getMax();
+    T get();
+
+    Type getType();
+
 }

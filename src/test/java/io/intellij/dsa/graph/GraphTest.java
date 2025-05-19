@@ -4,8 +4,6 @@ import io.intellij.dsa.graph.impl.DenseGraph;
 import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 /**
  * GraphTest
  *

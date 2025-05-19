@@ -1,7 +1,9 @@
 package io.intellij.dsa.tree;
 
 import io.intellij.dsa.DSAUtils;
-import io.intellij.dsa.tree.heap.MaxHeap;
+import io.intellij.dsa.tree.heap.Heap;
+import io.intellij.dsa.tree.heap.HeapImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -15,20 +17,18 @@ import java.util.Arrays;
 public class HeapTest {
 
     @Test
-    public void testMaxHeap() {
+    public void testMinHeap() {
         Integer[] array = DSAUtils.createRandomArray(1000000, 1000000);
         Integer[] copyArray = DSAUtils.copyArray(array);
-        MaxHeap<Integer> heap = new MaxHeap<>();
+        HeapImpl<Integer> heap = new HeapImpl<>(Heap.Type.MIN);
         for (Integer i : array) {
             heap.add(i);
         }
 
         Arrays.sort(copyArray);
-        for (int i = copyArray.length - 1; i >= 0; i--) {
-            Integer max = heap.extractMax();
-            if (!max.equals(copyArray[i])) {
-                throw new RuntimeException("Heap is not sorted");
-            }
+        for (Integer integer : copyArray) {
+            Integer min = heap.extract();
+            Assertions.assertEquals(integer, min);
         }
     }
 
@@ -37,13 +37,11 @@ public class HeapTest {
         Integer[] array = DSAUtils.createRandomArray(1000000, 1000000);
         Integer[] copyArray = DSAUtils.copyArray(array);
 
-        MaxHeap<Integer> heap = new MaxHeap<>(array);
+        HeapImpl<Integer> heap = new HeapImpl<>(array, Heap.Type.MIN);
         Arrays.sort(copyArray);
-        for (int i = copyArray.length - 1; i >= 0; i--) {
-            Integer max = heap.extractMax();
-            if (!max.equals(copyArray[i])) {
-                throw new RuntimeException("Heap is not sorted");
-            }
+        for (Integer integer : copyArray) {
+            Integer min = heap.extract();
+            Assertions.assertEquals(integer, min);
         }
     }
 
