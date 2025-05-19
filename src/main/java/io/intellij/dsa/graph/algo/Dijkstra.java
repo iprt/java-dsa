@@ -151,7 +151,7 @@ public class Dijkstra extends GraphAlgo {
             if (weighted) {
                 this.edgeWeight = edge.getWeight();
             } else {
-                this.edgeWeight = 1.0;
+                this.edgeWeight = Graph.DEFAULT_UNWEIGHTED_VALUE;
             }
             this.totalWeight = this.edgeWeight;
         }

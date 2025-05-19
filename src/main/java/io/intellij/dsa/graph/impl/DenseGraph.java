@@ -39,11 +39,6 @@ public class DenseGraph implements Graph {
     }
 
     @Override
-    public boolean isEmpty() {
-        return vertexIndex.isEmpty();
-    }
-
-    @Override
     public boolean isDirected() {
         return this.directed;
     }
@@ -135,11 +130,7 @@ public class DenseGraph implements Graph {
     @Override
     public List<Edge> adjacentEdges(String name) {
         Vertex vertex = vertexIndex.getVertex(name);
-        if (vertex == null) {
-            return null;
-        }
-        int index = vertex.id();
-        return adjacentEdges(index);
+        return vertex == null ? null : adjacentEdges(vertex.id());
     }
 
     @Override

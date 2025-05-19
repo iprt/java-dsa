@@ -10,9 +10,11 @@ import java.util.Map;
  * @since 2025-05-17
  */
 public interface Graph {
-    double DEFAULT_UNWEIGHTED_VALUE = 0.0;
+    double DEFAULT_UNWEIGHTED_VALUE = 1.0;
 
-    boolean isEmpty();
+    default boolean isEmpty() {
+        return verticesNum() == 0;
+    }
 
     // 是否有向图
     boolean isDirected();
