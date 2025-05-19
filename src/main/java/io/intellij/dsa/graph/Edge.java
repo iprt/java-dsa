@@ -15,7 +15,7 @@ public class Edge {
     private double weight;
 
     public Edge(Vertex source, Vertex target) {
-        this(source, target, 0.0);
+        this(source, target, Graph.DEFAULT_UNWEIGHTED_VALUE);
     }
 
     public Edge(Vertex source, Vertex target, double weight) {
@@ -40,6 +40,14 @@ public class Edge {
         } else {
             throw new IllegalArgumentException("Vertex is not part of the edge");
         }
+    }
+
+    // Checks if two edges are the same
+    public boolean same(Edge other) {
+        if (other == null) {
+            return false;
+        }
+        return this.source.same(other.source) && this.target.same(other.target);
     }
 
 }

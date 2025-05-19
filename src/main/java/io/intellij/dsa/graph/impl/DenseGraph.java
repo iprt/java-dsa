@@ -26,7 +26,7 @@ public class DenseGraph implements Graph {
     private final boolean weighted;
 
     // 邻接矩阵
-    private Double[][] matrix;
+    private Double[][] adjacencyMatrix;
 
     private int edgesCount;
 
@@ -34,7 +34,7 @@ public class DenseGraph implements Graph {
         this.directed = directed;
         this.weighted = weighted;
         // 初始化邻接矩阵，后续会根据顶点数动态调整大小，一张图理论上最少2个点
-        this.matrix = new Double[2][2];
+        this.adjacencyMatrix = new Double[2][2];
         this.edgesCount = 0;
     }
 
@@ -80,16 +80,16 @@ public class DenseGraph implements Graph {
 
     private void doConnect(Vertex from, Vertex to, double weight, boolean directed) {
         int size = vertexIndex.size();
-        if (size > matrix.length) {
+        if (size > adjacencyMatrix.length) {
             expand(size);
         }
         if (weighted) {
-            if (this.matrix[from.getId()][to.getId()] != null) {
+            if (this.adjacencyMatrix[from.getId()][to.getId()] != null) {
                 log.info("reset edge's weight: {} -> {} = {}", from, to, weight);
             }
-            this.matrix[from.getId()][to.getId()] = weight;
+            this.adjacencyMatrix[from.getId()][to.getId()] = weight;
         } else {
-            this.matrix[from.getId()][to.getId()] = 0.0;
+            this.adjacencyMatrix[from.getId()][to.getId()] = DEFAULT_UNWEIGHTED_VALUE;
         }
         this.edgesCount++;
         if (!directed) {
@@ -101,10 +101,10 @@ public class DenseGraph implements Graph {
     // 扩展邻接矩阵
     private void expand(int newSize) {
         Double[][] newMatrix = new Double[newSize][newSize];
-        for (int i = 0; i < matrix.length; i++) {
-            System.arraycopy(matrix[i], 0, newMatrix[i], 0, matrix[i].length);
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            System.arraycopy(adjacencyMatrix[i], 0, newMatrix[i], 0, adjacencyMatrix[i].length);
         }
-        this.matrix = newMatrix;
+        this.adjacencyMatrix = newMatrix;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class DenseGraph implements Graph {
         }
         int id = vertex.getId();
         List<Edge> edges = new ArrayList<>();
-        Double[] links = matrix[id];
+        Double[] links = adjacencyMatrix[id];
         for (int i = 0; i < links.length; i++) {
             if (links[i] != null) {
                 edges.add(new Edge(vertex, vertexIndex.getVertex(i), links[i]));
@@ -152,7 +152,7 @@ public class DenseGraph implements Graph {
             System.out.print(DSAUtils.beautify(v.getId() + ":" + v.getName(), 5));
 
             for (int j = 0; j < vertexIndex.size(); j++) {
-                Double element = (i < matrix.length && j < matrix[i].length) ? matrix[i][j] : null;
+                Double element = (i < adjacencyMatrix.length && j < adjacencyMatrix[i].length) ? adjacencyMatrix[i][j] : null;
                 if (element != null) {
                     System.out.print(DSAUtils.beautify("" + element, 5));
                 } else {
@@ -161,6 +161,11 @@ public class DenseGraph implements Graph {
             }
             System.out.println();
         }
+    }
+
+    @Override
+    public Double[][] getAdjacencyMatrix() {
+        return this.adjacencyMatrix;
     }
 
 }

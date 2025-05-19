@@ -1,6 +1,7 @@
 package io.intellij.dsa.graph;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Graph
@@ -9,6 +10,8 @@ import java.util.List;
  * @since 2025-05-17
  */
 public interface Graph {
+    double DEFAULT_UNWEIGHTED_VALUE = 0.0;
+
     // 是否有向图
     boolean isDirected();
 
@@ -29,7 +32,7 @@ public interface Graph {
 
     // 连接两个点
     default void connect(String from, String to) {
-        connect(from, to, 0.0);
+        connect(from, to, DEFAULT_UNWEIGHTED_VALUE);
     }
 
     // 获取顶点的邻边
@@ -38,4 +41,13 @@ public interface Graph {
     // 打印图
     void showGraph();
 
+    // 获取邻接矩阵
+    default Double[][] getAdjacencyMatrix() {
+        return null;
+    }
+
+    // 获取邻接表
+    default List<Map<Integer, Double>> getAdjacencyList() {
+        return null;
+    }
 }

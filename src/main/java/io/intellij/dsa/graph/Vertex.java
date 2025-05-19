@@ -21,4 +21,11 @@ public class Vertex {
         this.name = name;
     }
 
+    public boolean same(Vertex other) {
+        if (other == null) {
+            return false;
+        }
+        return this.id == other.id;
+    }
+
 }

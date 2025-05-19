@@ -1,6 +1,7 @@
 package io.intellij.dsa.graph;
 
 import io.intellij.dsa.graph.impl.DenseGraph;
+import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,11 +21,15 @@ public class GraphTest {
         graph.connect("A", "C");
         graph.connect("B", "C");
         graph.showGraph();
+    }
 
-        List<Edge> edges = graph.adjacentEdges("A");
-        for (Edge edge : edges) {
-            System.out.println(edge);
-        }
+    @Test
+    public void testShowSparseGraph() {
+        Graph graph = new SparseGraph(false, false);
+        graph.connect("A", "B");
+        graph.connect("A", "C");
+        graph.connect("B", "C");
+        graph.showGraph();
     }
 
 }
