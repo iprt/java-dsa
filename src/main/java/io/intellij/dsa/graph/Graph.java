@@ -12,6 +12,8 @@ import java.util.Map;
 public interface Graph {
     double DEFAULT_UNWEIGHTED_VALUE = 0.0;
 
+    boolean isEmpty();
+
     // 是否有向图
     boolean isDirected();
 
@@ -27,6 +29,9 @@ public interface Graph {
     // 所有的顶点
     List<Vertex> getVertices();
 
+    // 获取顶点的边
+    Edge getEdge(String from, String to);
+
     // 连接两个点
     void connect(String from, String to, double weight);
 
@@ -36,10 +41,16 @@ public interface Graph {
     }
 
     // 获取顶点的邻边
-    List<Edge> adjacentEdges(String vertexName);
+    List<Edge> adjacentEdges(String name);
+
+    // 获取顶点的邻边
+    List<Edge> adjacentEdges(int index);
 
     // 打印图
     void showGraph();
+
+    // 获取顶点的索引
+    VertexIndex getVertexIndex();
 
     // 获取邻接矩阵
     default Double[][] getAdjacencyMatrix() {
@@ -50,4 +61,5 @@ public interface Graph {
     default List<Map<Integer, Double>> getAdjacencyList() {
         return null;
     }
+
 }

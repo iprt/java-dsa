@@ -10,20 +10,20 @@ import lombok.Data;
  */
 @Data
 public class Edge {
-    private Vertex source;
-    private Vertex target;
+    private Vertex from;
+    private Vertex to;
     private double weight;
 
-    public Edge(Vertex source, Vertex target) {
-        this(source, target, Graph.DEFAULT_UNWEIGHTED_VALUE);
+    public Edge(Vertex from, Vertex to) {
+        this(from, to, Graph.DEFAULT_UNWEIGHTED_VALUE);
     }
 
-    public Edge(Vertex source, Vertex target, double weight) {
-        if (source == null || target == null) {
+    public Edge(Vertex from, Vertex to, double weight) {
+        if (from == null || to == null) {
             throw new IllegalArgumentException("Source and target vertices cannot be null");
         }
-        this.source = source;
-        this.target = target;
+        this.from = from;
+        this.to = to;
         this.weight = weight;
     }
 
@@ -32,11 +32,11 @@ public class Edge {
         if (v == null) {
             throw new IllegalArgumentException("Vertex cannot be null");
         }
-        int id = v.getId();
-        if (source.getId() == id) {
-            return target;
-        } else if (target.getId() == id) {
-            return source;
+        int id = v.id();
+        if (from.id() == id) {
+            return to;
+        } else if (to.id() == id) {
+            return from;
         } else {
             throw new IllegalArgumentException("Vertex is not part of the edge");
         }
@@ -47,7 +47,7 @@ public class Edge {
         if (other == null) {
             return false;
         }
-        return this.source.same(other.source) && this.target.same(other.target);
+        return this.from.same(other.from) && this.to.same(other.to);
     }
 
 }

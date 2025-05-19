@@ -5,6 +5,7 @@ import io.intellij.dsa.graph.Graph;
 import io.intellij.dsa.graph.Vertex;
 import io.intellij.dsa.graph.VertexIndex;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,11 @@ public class SparseGraph implements Graph {
     }
 
     @Override
+    public boolean isEmpty() {
+        return vertexIndex.isEmpty();
+    }
+
+    @Override
     public boolean isDirected() {
         return this.directed;
     }
@@ -64,6 +70,25 @@ public class SparseGraph implements Graph {
     }
 
     @Override
+    public Edge getEdge(String from, String to) {
+        if (StringUtils.isBlank(from) || StringUtils.isBlank(to)) {
+            return null;
+        }
+        if (from.equals(to)) {
+            return null;
+        }
+        Vertex fromV = vertexIndex.getVertex(from);
+        Vertex toV = vertexIndex.getVertex(to);
+        if (fromV == null || toV == null) {
+            return null;
+        }
+        Map<Integer, Double> toMap = this.adjacencyList.get(fromV.id());
+        return toMap.containsKey(toV.id()) ?
+                new Edge(fromV, toV, toMap.get(toV.id())) :
+                null;
+    }
+
+    @Override
     public void connect(String from, String to, double weight) {
         if (from == null || to == null) {
             throw new IllegalArgumentException("Vertex names cannot be null");
@@ -76,8 +101,8 @@ public class SparseGraph implements Graph {
 
     private void doConnect(Vertex from, Vertex to, double weight, boolean directed) {
         // 决定是add还是get(index)
-        int fromId = from.getId();
-        int toId = to.getId();
+        int fromId = from.id();
+        int toId = to.id();
 
         if (fromId + 1 > adjacencyList.size()) {
             adjacencyList.add(new HashMap<>());
@@ -99,17 +124,29 @@ public class SparseGraph implements Graph {
     }
 
     @Override
-    public List<Edge> adjacentEdges(String vertexName) {
-        Vertex vertex = vertexIndex.getVertex(vertexName);
+    public List<Edge> adjacentEdges(String name) {
+        Vertex vertex = vertexIndex.getVertex(name);
         if (vertex == null) {
             return null;
         }
-        Map<Integer, Double> toWeightMap = adjacencyList.get(vertex.getId());
+        return adjacentEdges(vertex.id());
+    }
+
+    @Override
+    public List<Edge> adjacentEdges(int index) {
+        if (index < 0 || index >= vertexIndex.size()) {
+            return null;
+        }
+        Map<Integer, Double> toWeightMap = adjacencyList.get(index);
+        if (null == toWeightMap || toWeightMap.isEmpty()) {
+            return List.of();
+        }
         List<Edge> edges = new ArrayList<>();
+        Vertex source = vertexIndex.getVertex(index);
         for (Map.Entry<Integer, Double> entry : toWeightMap.entrySet()) {
-            Vertex toVertex = vertexIndex.getVertex(entry.getKey());
-            if (toVertex != null) {
-                edges.add(new Edge(vertex, toVertex, entry.getValue()));
+            Vertex target = vertexIndex.getVertex(entry.getKey());
+            if (target != null) {
+                edges.add(new Edge(source, target, entry.getValue()));
             }
         }
         return edges;
@@ -127,18 +164,23 @@ public class SparseGraph implements Graph {
         String toFmt = "%s(%d) -- %.2f -> %s(%d)   ";
         for (int fromId = 0; fromId < adjacencyList.size(); fromId++) {
             Vertex fromV = vertexIndex.getVertex(fromId);
-            System.out.printf(startFmt, fromV.getName(), fromId);
+            System.out.printf(startFmt, fromV.name(), fromId);
             Map<Integer, Double> map = adjacencyList.get(fromId);
             for (Map.Entry<Integer, Double> to : map.entrySet()) {
                 Integer toId = to.getKey();
                 Vertex toV = vertexIndex.getVertex(toId);
                 System.out.printf(toFmt,
-                        fromV.getName(), fromId,
+                        fromV.name(), fromId,
                         to.getValue(),
-                        toV.getName(), toId);
+                        toV.name(), toId);
             }
             System.out.println();
         }
+    }
+
+    @Override
+    public VertexIndex getVertexIndex() {
+        return this.vertexIndex;
     }
 
     @Override

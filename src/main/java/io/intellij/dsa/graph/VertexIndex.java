@@ -23,6 +23,10 @@ public class VertexIndex {
         this.nameIndex = new HashMap<>();
     }
 
+    public boolean isEmpty() {
+        return vertices.isEmpty();
+    }
+
     public int size() {
         return nameIndex.size();
     }

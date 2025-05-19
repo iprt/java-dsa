@@ -39,6 +39,11 @@ public class DenseGraph implements Graph {
     }
 
     @Override
+    public boolean isEmpty() {
+        return vertexIndex.isEmpty();
+    }
+
+    @Override
     public boolean isDirected() {
         return this.directed;
     }
@@ -63,6 +68,26 @@ public class DenseGraph implements Graph {
         return vertexIndex.getVertices();
     }
 
+    @Override
+    public Edge getEdge(String from, String to) {
+        if (StringUtils.isBlank(from) || StringUtils.isBlank(to)) {
+            return null;
+        }
+        if (from.equals(to)) {
+            // 自环边
+            return null;
+        }
+        Vertex fromV = vertexIndex.getVertex(from);
+        Vertex toV = vertexIndex.getVertex(to);
+        if (fromV == null || toV == null) {
+            return null;
+        }
+        Double weight = this.adjacencyMatrix[fromV.id()][toV.id()];
+        if (weight == null) {
+            return null;
+        }
+        return new Edge(fromV, toV, this.adjacencyMatrix[fromV.id()][toV.id()]);
+    }
 
     @Override
     public void connect(String from, String to, double weight) {
@@ -84,12 +109,12 @@ public class DenseGraph implements Graph {
             expand(size);
         }
         if (weighted) {
-            if (this.adjacencyMatrix[from.getId()][to.getId()] != null) {
+            if (this.adjacencyMatrix[from.id()][to.id()] != null) {
                 log.info("reset edge's weight: {} -> {} = {}", from, to, weight);
             }
-            this.adjacencyMatrix[from.getId()][to.getId()] = weight;
+            this.adjacencyMatrix[from.id()][to.id()] = weight;
         } else {
-            this.adjacencyMatrix[from.getId()][to.getId()] = DEFAULT_UNWEIGHTED_VALUE;
+            this.adjacencyMatrix[from.id()][to.id()] = DEFAULT_UNWEIGHTED_VALUE;
         }
         this.edgesCount++;
         if (!directed) {
@@ -108,17 +133,26 @@ public class DenseGraph implements Graph {
     }
 
     @Override
-    public List<Edge> adjacentEdges(String vertexName) {
-        Vertex vertex = vertexIndex.getVertex(vertexName);
+    public List<Edge> adjacentEdges(String name) {
+        Vertex vertex = vertexIndex.getVertex(name);
         if (vertex == null) {
             return null;
         }
-        int id = vertex.getId();
+        int index = vertex.id();
+        return adjacentEdges(index);
+    }
+
+    @Override
+    public List<Edge> adjacentEdges(int index) {
+        if (index < 0 || index >= vertexIndex.size()) {
+            return null;
+        }
+        Vertex source = vertexIndex.getVertex(index);
         List<Edge> edges = new ArrayList<>();
-        Double[] links = adjacencyMatrix[id];
-        for (int i = 0; i < links.length; i++) {
-            if (links[i] != null) {
-                edges.add(new Edge(vertex, vertexIndex.getVertex(i), links[i]));
+        Double[] toArr = adjacencyMatrix[index];
+        for (int i = 0; i < toArr.length; i++) {
+            if (toArr[i] != null) {
+                edges.add(new Edge(source, vertexIndex.getVertex(i), toArr[i]));
             }
         }
         return edges;
@@ -133,7 +167,7 @@ public class DenseGraph implements Graph {
         // 先打印顶点信息
         System.out.println("Vertex Information:");
         for (Vertex vertex : vertexIndex.getVertices()) {
-            System.out.println("ID: " + vertex.getId() + ", Name: " + vertex.getName());
+            System.out.println("ID: " + vertex.id() + ", Name: " + vertex.name());
         }
 
         // 打印 matrix 并在第一行和第一列显示顶点信息
@@ -142,25 +176,31 @@ public class DenseGraph implements Graph {
         System.out.print("      "); // 留出行标题的空间
         for (int i = 0; i < vertexIndex.size(); i++) {
             Vertex v = vertexIndex.getVertex(i);
-            System.out.print(DSAUtils.beautify(v.getId() + ":" + v.getName(), 5));
+            System.out.print(DSAUtils.beautify(v.id() + ":" + v.name(), 5));
         }
-        System.out.println();
 
+        System.out.println();
         // 打印矩阵内容
+        final int width = 5;
         for (int i = 0; i < vertexIndex.size(); i++) {
             Vertex v = vertexIndex.getVertex(i);
-            System.out.print(DSAUtils.beautify(v.getId() + ":" + v.getName(), 5));
+            System.out.print(DSAUtils.beautify(v.id() + ":" + v.name(), width));
 
             for (int j = 0; j < vertexIndex.size(); j++) {
                 Double element = (i < adjacencyMatrix.length && j < adjacencyMatrix[i].length) ? adjacencyMatrix[i][j] : null;
                 if (element != null) {
-                    System.out.print(DSAUtils.beautify("" + element, 5));
+                    System.out.print(DSAUtils.beautify("" + element, width));
                 } else {
-                    System.out.print(DSAUtils.beautify("nil", 5));
+                    System.out.print(DSAUtils.beautify("nil", width));
                 }
             }
             System.out.println();
         }
+    }
+
+    @Override
+    public VertexIndex getVertexIndex() {
+        return this.vertexIndex;
     }
 
     @Override
