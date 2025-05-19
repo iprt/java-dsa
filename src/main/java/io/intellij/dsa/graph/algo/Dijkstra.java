@@ -37,13 +37,7 @@ public class Dijkstra extends GraphAlgo {
     }
 
     public ComputeResult compute(String source, String brokenTaget) {
-        if (graph.isEmpty()) {
-            throw new IllegalArgumentException("Graph is empty");
-        }
-        Vertex sourceV = this.graph.getVertexIndex().getVertex(source);
-        if (sourceV == null) {
-            throw new IllegalArgumentException("Source vertex not found");
-        }
+        Vertex sourceV = checkGraph().checkVertex(source, true);
         Vertex brokenTargetV = this.graph.getVertexIndex().getVertex(brokenTaget);
         if (brokenTargetV == null) {
             System.out.println("Broken target vertex not found, using null");

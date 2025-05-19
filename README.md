@@ -33,5 +33,7 @@ Data Structures and Algorithms
 
 图中的算法
 
+- [图的遍历](src/main/java/io/intellij/dsa/graph/algo/Traverse.java)
+    - 深度遍历(`dfs`)和广度遍历(`bfs`)
 - [无向图联通分量](src/main/java/io/intellij/dsa/graph/algo/Components.java)
 - [单源最短路径](src/main/java/io/intellij/dsa/graph/algo/Dijkstra.java)

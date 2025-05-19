@@ -26,14 +26,11 @@ public class Components extends GraphAlgo {
         super(graph);
         this.count = 0;
         this.visited = new HashMap<>();
-        if (graph.isDirected()) {
-            throw new IllegalArgumentException("Graph must be undirected");
-        }
         this.compute();
     }
 
     @Override
-    protected void reset() {
+    public void reset() {
         this.count = 0;
         this.visited.clear();
     }
@@ -44,7 +41,7 @@ public class Components extends GraphAlgo {
 
     // 计算联通分量
     public void compute() {
-        this.reset();
+        checkGraph().checkDirected(false).reset();
         List<Vertex> vertices = this.graph.getVertices();
         for (Vertex vertex : vertices) {
             if (!visited.containsKey(vertex.id())) {
@@ -56,32 +53,23 @@ public class Components extends GraphAlgo {
 
     // 计算联通分量，遍历
     void compute(Vertex vertex) {
-        int sourceId = vertex.id();
-        visited.put(sourceId, count);
-        List<Edge> edges = this.graph.adjacentEdges(sourceId);
+        int fromId = vertex.id();
+        visited.put(fromId, count);
 
+        List<Edge> edges = this.graph.adjacentEdges(fromId);
         for (Edge edge : edges) {
-            Vertex target = edge.getTo();
-            int targetId = target.id();
-            if (!visited.containsKey(targetId)) {
-                this.visited.put(targetId, count);
-                this.compute(target);
+            Vertex toV = edge.getTo();
+            int toId = toV.id();
+            if (!visited.containsKey(toId)) {
+                this.visited.put(toId, count);
+                this.compute(toV);
             }
         }
     }
 
     public boolean hasPath(String source, String target) {
-        if (source == null || target == null) {
-            throw new IllegalArgumentException("Vertex name cannot be null");
-        }
-
-        if (graph.isEmpty()) {
-            return false;
-        }
-
-        Vertex fromV = this.graph.getVertexIndex().getVertex(source);
-        Vertex toV = this.graph.getVertexIndex().getVertex(target);
-
+        Vertex fromV = checkGraph().checkVertex(source, false);
+        Vertex toV = checkVertex(target, false);
         if (fromV == null || toV == null) {
             return false;
         }

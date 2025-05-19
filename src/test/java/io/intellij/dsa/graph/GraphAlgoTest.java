@@ -2,6 +2,8 @@ package io.intellij.dsa.graph;
 
 import io.intellij.dsa.graph.algo.Components;
 import io.intellij.dsa.graph.algo.Dijkstra;
+import io.intellij.dsa.graph.algo.Traverse;
+import io.intellij.dsa.graph.impl.DenseGraph;
 import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,22 @@ public class GraphAlgoTest {
                     result.getRoutes(vertex)
             );
         });
+
+    }
+
+    @Test
+    public void testTraverse() {
+        Graph graph = new DenseGraph(false, false);
+
+        graph.connect("A", "B");
+        graph.connect("B", "D");
+        graph.connect("A", "C");
+        graph.connect("C", "E");
+
+        Traverse traverse = new Traverse(graph);
+
+        traverse.dfs("A");
+        traverse.bfs("A");
 
     }
 
