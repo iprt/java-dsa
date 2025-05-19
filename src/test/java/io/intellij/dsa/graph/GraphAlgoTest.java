@@ -8,7 +8,7 @@ import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * GraphAlgoTest
@@ -36,25 +36,33 @@ public class GraphAlgoTest {
     @Test
     public void testDijkstra() {
         Graph graph = new SparseGraph(false, true);
+        // A -> B (权重: 3)
+        // A -> C (权重: 1)
+        // B -> D (权重: 3)
+        // C -> B (权重: 1)
+        // C -> D (权重: 5)
+        // C -> E (权重: 2)
+        // D -> F (权重: 2)
+        // E -> F (权重: 1)
+        // B -> F (权重: 8)
 
-        graph.connect("A", "B", 4);
-        graph.connect("A", "D", 2);
-        graph.connect("B", "D", 1);
-        graph.connect("B", "C", 4);
-        graph.connect("C", "D", 1);
-        graph.connect("C", "E", 3);
-        graph.connect("D", "E", 7);
+        // A -> C -> E -> F
+        graph.connect("A", "B", 3);
+        graph.connect("A", "C", 1);
+        graph.connect("B", "D", 3);
+        graph.connect("C", "B", 1);
+        graph.connect("C", "D", 5);
+        graph.connect("C", "E", 2);
+        graph.connect("D", "F", 2);
+        graph.connect("E", "F", 1);
+        graph.connect("B", "F", 8);
 
         Dijkstra dijkstra = new Dijkstra(graph);
 
         Dijkstra.ComputeResult result = dijkstra.compute("A");
-
-        List.of("B", "C", "D", "E").forEach(vertex -> {
-            result.printRoutes(
-                    result.getRoutes(vertex)
-            );
-        });
-
+        Stream.of("B", "C", "D", "E", "F")
+                .map(result::getRoutes)
+                .forEach(result::printRoutes);
     }
 
     @Test
