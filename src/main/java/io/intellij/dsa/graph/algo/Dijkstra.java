@@ -215,7 +215,7 @@ public class Dijkstra extends GraphAlgo {
                 return;
             }
             Edge lastEdge = edges.get(edges.size() - 1);
-            System.out.println("Shortest path from " + source.name() + " to " + lastEdge.getTo().name());
+            System.out.println("\nShortest path from " + source.name() + " to " + lastEdge.getTo().name());
             System.out.println("Distance: " + distanceToSource.get(lastEdge.getTo().name()));
             System.out.print("Route:");
             String notEndFmt = " %s --%.1f-> ";
@@ -232,6 +232,7 @@ public class Dijkstra extends GraphAlgo {
                     System.out.printf(notEndFmt, from, edge.getWeight());
                 }
             }
+            System.out.println();
         }
 
     }

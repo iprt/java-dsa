@@ -6,6 +6,8 @@ import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 /**
  * GraphAlgoTest
  *
@@ -45,9 +47,11 @@ public class GraphAlgoTest {
 
         Dijkstra.ComputeResult result = dijkstra.compute("A");
 
-        result.printRoutes(
-                result.getRoutes("E")
-        );
+        List.of("B", "C", "D", "E").forEach(vertex -> {
+            result.printRoutes(
+                    result.getRoutes(vertex)
+            );
+        });
 
     }
 
