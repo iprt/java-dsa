@@ -39,7 +39,7 @@ public class SortTest {
     }
 
     private void sortTest(Sort<Integer> sort) {
-        SortHelper.SortResult sortResult = new SortHelper<>(sort, size, max).sort();
+        SortHelper.SortResult sortResult = new SortHelper(sort, size, max).sort();
         System.out.println(sortResult);
         Assertions.assertTrue(sortResult.isIncrement());
         Assertions.assertTrue(sortResult.isSame());
