@@ -120,6 +120,14 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
         return this.type;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void clear() {
+        this.capacity = DEFAULT_CAPACITY;
+        this.count = 0;
+        this.data = (T[]) new Comparable[capacity];
+    }
+
     // parent index = (index - 1) / 2
     private void siftUp(int index) {
         // 当前节点 > 0 代表有父节点

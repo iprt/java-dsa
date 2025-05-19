@@ -27,4 +27,6 @@ public interface Heap<T extends Comparable<T>> extends Iterable<T> {
 
     Type getType();
 
+    void clear();
+
 }
