@@ -130,10 +130,24 @@ public class DSAUtils {
      * @param b   the second element to compare; must not be null
      * @param <E> the type of elements being compared, which must implement {@code Comparable<E>}
      * @return {@code true} if the two elements are equal according to their natural ordering;
-     *         {@code false} otherwise
+     * {@code false} otherwise
      */
     public static <E extends Comparable<E>> boolean equals(@NotNull E a, @NotNull E b) {
         return a.compareTo(b) == 0;
+    }
+
+    public static String beautify(String str, int width) {
+        // 打印str，宽度为width，如果超过width，则截取，最后加上空格，左对齐
+        StringBuilder sb = new StringBuilder();
+        int len = str.length();
+        if (len > width) {
+            sb.append(str, 0, width);
+        } else {
+            sb.append(str);
+            sb.append(" ".repeat(width - len));
+        }
+        sb.append(" ");
+        return sb.toString();
     }
 
 }
