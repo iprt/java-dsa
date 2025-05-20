@@ -35,7 +35,7 @@ public class Components extends GraphAlgo {
         this.visited.clear();
     }
 
-    public int componentsCount() {
+    public int count() {
         return count;
     }
 

@@ -2,6 +2,8 @@ package io.intellij.dsa.graph;
 
 import lombok.Data;
 
+import java.util.function.Function;
+
 /**
  * Edge
  *
@@ -10,6 +12,11 @@ import lombok.Data;
  */
 @Data
 public class Edge {
+
+    public static Function<Edge, String> UNDIRECTED_TO_STRING = edge -> String.format("%s <-> %s : %f", edge.from.name(), edge.to.name(), edge.getWeight());
+
+    public static Function<Edge, String> DIRECT_TO_STRING = edge -> String.format("%s -> %s : %f", edge.from.name(), edge.to.name(), edge.getWeight());
+
     private Vertex from;
     private Vertex to;
     private double weight;

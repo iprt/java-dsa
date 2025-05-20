@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class GraphAlgo {
     protected final Graph graph;
 
-    protected GraphAlgo(Graph graph) {
+    public GraphAlgo(Graph graph) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph cannot be null");
         }

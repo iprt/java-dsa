@@ -33,11 +33,11 @@ public class Dijkstra extends GraphAlgo {
         this.weighted = graph.isWeighted();
     }
 
-    public ComputeResult compute(String source) {
+    public Result compute(String source) {
         return this.compute(source, null);
     }
 
-    public ComputeResult compute(String source, Set<String> breakFilter) {
+    public Result compute(String source, Set<String> breakFilter) {
         Vertex sourceV = checkGraph().checkVertex(source, true);
         if (breakFilter != null) {
             breakFilter = breakFilter.stream()
@@ -54,11 +54,11 @@ public class Dijkstra extends GraphAlgo {
         return this.compute(sourceV, breakFilter);
     }
 
-    private ComputeResult compute(Vertex source, Set<String> breakFilter) {
+    private Result compute(Vertex source, Set<String> breakFilter) {
         if (source == null) {
             throw new IllegalArgumentException("Source vertex cannot be null");
         }
-        ComputeResult result = new ComputeResult(source, this.graph);
+        Result result = new Result(source, this.graph);
         PriorityQueue<EdgeWrapper> queue = new PriorityQueue<>(
                 this.graph.adjacentEdges(source.id()).stream()
                         .map(edge -> new EdgeWrapper(edge, this.weighted)).toList()
@@ -173,7 +173,7 @@ public class Dijkstra extends GraphAlgo {
         }
     }
 
-    public static class ComputeResult {
+    public static class Result {
         private final Vertex source;
         private final Graph graph;
 
@@ -185,7 +185,7 @@ public class Dijkstra extends GraphAlgo {
         private final Map<String, String> pathFrom;
 
 
-        private ComputeResult(Vertex source, Graph graph) {
+        private Result(Vertex source, Graph graph) {
             this.source = source;
             this.graph = graph;
 
