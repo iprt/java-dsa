@@ -137,6 +137,10 @@ public class GraphAlgoTest {
         UndirectedCycles algo = new UndirectedCycles(utils.getGraph());
         UndirectedCycles.Result result = algo.findCycles();
         result.printCycles();
+
+        Assertions.assertEquals(2, result.getCycles().stream()
+                .filter(cycle -> cycle.size() > 2).count());
+
     }
 
 }
