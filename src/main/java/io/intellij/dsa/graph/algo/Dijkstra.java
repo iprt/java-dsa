@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Dijkstra
@@ -36,16 +37,24 @@ public class Dijkstra extends GraphAlgo {
         return this.compute(source, null);
     }
 
-    public ComputeResult compute(String source, String brokenTaget) {
+    public ComputeResult compute(String source, Set<String> breakFilter) {
         Vertex sourceV = checkGraph().checkVertex(source, true);
-        Vertex brokenTargetV = this.graph.getVertexIndex().getVertex(brokenTaget);
-        if (brokenTargetV == null) {
-            System.out.println("Broken target vertex not found, using null");
+        if (breakFilter != null) {
+            breakFilter = breakFilter.stream()
+                    .map(name -> checkVertex(name, false))
+                    .filter(Objects::nonNull)
+                    .map(Vertex::name)
+                    .filter(name -> !name.equals(sourceV.name()))
+                    .collect(Collectors.toSet());
+
+            if (breakFilter.isEmpty()) {
+                breakFilter = null;
+            }
         }
-        return this.compute(sourceV, brokenTargetV);
+        return this.compute(sourceV, breakFilter);
     }
 
-    private ComputeResult compute(Vertex source, Vertex brokenTarget) {
+    private ComputeResult compute(Vertex source, Set<String> breakFilter) {
         if (source == null) {
             throw new IllegalArgumentException("Source vertex cannot be null");
         }
@@ -122,12 +131,20 @@ public class Dijkstra extends GraphAlgo {
             result.calculateCompleted.add(to.name());
 
             // 如果指定了目标节点，且已经计算过了，则退出
-            if (to.same(brokenTarget)) {
+            if (canBreak(breakFilter, to.name())) {
                 break;
             }
-        }
 
+        }
         return result;
+    }
+
+    private boolean canBreak(Set<String> breakFilter, String complete) {
+        if (breakFilter == null) {
+            return false;
+        }
+        breakFilter.remove(complete);
+        return breakFilter.isEmpty();
     }
 
     @Getter
