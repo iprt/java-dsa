@@ -37,8 +37,8 @@
     - 深度遍历(`dfs`)
     - 广度遍历(`bfs`)
 - [最小生成树](src/main/java/io/intellij/dsa/graph/algo/Mst.java)
-    - `Prim`算法：遍历 + 切分
-    - `Kruskal`算法：最小堆 + 并查集
+    - `Prim`算法：广度遍历 + 切分
+    - `Kruskal`算法：最小堆 + 并查集 + 切分
 - [无向图联通分量](src/main/java/io/intellij/dsa/graph/algo/Components.java)
 - [单源最短路径](src/main/java/io/intellij/dsa/graph/algo/Dijkstra.java)
 - [无向图寻找所有环](src/main/java/io/intellij/dsa/graph/algo/UndirectedCycles.java)

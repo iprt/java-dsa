@@ -28,18 +28,12 @@ public class Mst extends GraphAlgo {
         check();
     }
 
-    private void check() {
-        checkGraphNotEmpty().checkDirected(false).checkWeighted(true);
-        Components components = new Components(this.graph);
-        if (components.count() > 1) {
-            throw new IllegalArgumentException("Graph is not connected");
-        }
-    }
-
     public Result prim() {
-        return this.prim(this.graph.getVertexIndex().getVertex(0), new HashSet<>());
+        Vertex start = this.graph.getVertexIndex().getVertex(0);
+        return this.prim(start, new HashSet<>());
     }
 
+    // prim: 广度遍历 + 切分
     private Result prim(Vertex vertex, Set<String> visited) {
         Result result = new Result();
         PriorityQueue<Edge> queue = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
@@ -65,7 +59,7 @@ public class Mst extends GraphAlgo {
         return result;
     }
 
-    // kruskal 算法，切分和并查集
+    // kruskal: 堆 + 并查集 + 切分
     public Result kruskal() {
         Result result = new Result();
         Map<String, Integer> visitedUf = new HashMap<>();
@@ -132,5 +126,14 @@ public class Mst extends GraphAlgo {
             this.totalWeight = 0;
         }
     }
+
+    private void check() {
+        checkGraphNotEmpty().checkDirected(false).checkWeighted(true);
+        Components components = new Components(this.graph);
+        if (components.count() > 1) {
+            throw new IllegalArgumentException("Graph is not connected");
+        }
+    }
+
 
 }
