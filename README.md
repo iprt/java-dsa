@@ -28,8 +28,8 @@
 
 [图的定义](src/main/java/io/intellij/dsa/graph/Graph.java)
 
-- [邻接矩阵，主要用于稠密图](src/main/java/io/intellij/dsa/graph/impl/DenseGraph.java)
-- [邻接表，主要用于稀疏图](src/main/java/io/intellij/dsa/graph/impl/SparseGraph.java)
+- [稠密图 邻接矩阵](src/main/java/io/intellij/dsa/graph/impl/DenseGraph.java)
+- [稀疏图 邻接表](src/main/java/io/intellij/dsa/graph/impl/SparseGraph.java)
 
 [图中的算法](src/main/java/io/intellij/dsa/graph/algo)
 
