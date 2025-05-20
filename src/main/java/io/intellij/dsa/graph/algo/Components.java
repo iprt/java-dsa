@@ -41,7 +41,7 @@ public class Components extends GraphAlgo {
 
     // 计算联通分量
     public void compute() {
-        checkGraph().checkDirected(false).reset();
+        checkGraphNotEmpty().checkDirected(false).reset();
         List<Vertex> vertices = this.graph.getVertices();
         for (Vertex vertex : vertices) {
             if (!visited.containsKey(vertex.id())) {
@@ -68,7 +68,7 @@ public class Components extends GraphAlgo {
     }
 
     public boolean hasPath(String source, String target) {
-        Vertex fromV = checkGraph().checkVertex(source, false);
+        Vertex fromV = checkGraphNotEmpty().checkVertex(source, false);
         Vertex toV = checkVertex(target, false);
         if (fromV == null || toV == null) {
             return false;

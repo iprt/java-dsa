@@ -38,7 +38,7 @@ public class Dijkstra extends GraphAlgo {
     }
 
     public Result compute(String source, Set<String> breakFilter) {
-        Vertex sourceV = checkGraph().checkVertex(source, true);
+        Vertex sourceV = checkGraphNotEmpty().checkVertex(source, true);
         if (breakFilter != null) {
             breakFilter = breakFilter.stream()
                     .map(name -> checkVertex(name, false))

@@ -4,6 +4,7 @@ import io.intellij.dsa.graph.algo.Components;
 import io.intellij.dsa.graph.algo.Dijkstra;
 import io.intellij.dsa.graph.algo.Mst;
 import io.intellij.dsa.graph.algo.Traverse;
+import io.intellij.dsa.graph.algo.UndirectedCycles;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -117,6 +118,25 @@ public class GraphAlgoTest {
         Stream.of("B", "C", "D", "E", "F")
                 .map(result::getRoutes)
                 .forEach(result::printRoutes);
+    }
+
+    @Test
+    public void testUndirectedCycles() {
+        String graphText = """
+                A B 1
+                A C 1
+                B C 1
+                C D 1
+                C E 1
+                D F 1
+                E F 1
+                """;
+        GraphUtils utils = new GraphUtils(false, true);
+        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
+
+        UndirectedCycles algo = new UndirectedCycles(utils.getGraph());
+        UndirectedCycles.Result result = algo.findCycles();
+        result.printCycles();
     }
 
 }

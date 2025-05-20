@@ -29,7 +29,7 @@ public class Mst extends GraphAlgo {
     }
 
     private void check() {
-        checkGraph().checkDirected(false).checkWeighted(true);
+        checkGraphNotEmpty().checkDirected(false).checkWeighted(true);
         Components components = new Components(this.graph);
         if (components.count() > 1) {
             throw new IllegalArgumentException("Graph is not connected");

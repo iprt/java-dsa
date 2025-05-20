@@ -18,7 +18,7 @@ public abstract class GraphAlgo {
         this.graph = graph;
     }
 
-    public GraphAlgo checkGraph() {
+    public GraphAlgo checkGraphNotEmpty() {
         if (graph.isEmpty()) {
             throw new IllegalArgumentException("Graph is empty");
         }
