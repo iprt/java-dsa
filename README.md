@@ -31,7 +31,7 @@
 - [邻接矩阵，主要用于稠密图](src/main/java/io/intellij/dsa/graph/impl/DenseGraph.java)
 - [邻接表，主要用于稀疏图](src/main/java/io/intellij/dsa/graph/impl/SparseGraph.java)
 
-图中的算法
+[图中的算法](src/main/java/io/intellij/dsa/graph/algo)
 
 - [图的遍历](src/main/java/io/intellij/dsa/graph/algo/Traverse.java)
     - 深度遍历(`dfs`)
