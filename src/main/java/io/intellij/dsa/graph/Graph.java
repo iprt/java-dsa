@@ -31,6 +31,16 @@ public interface Graph {
     // 所有的顶点
     List<Vertex> getVertices();
 
+    default List<Edge> getEdges() {
+        if (isEmpty()) {
+            return List.of();
+        }
+        return getVertexIndex().getVertices()
+                .stream().map(vertex -> adjacentEdges(vertex.id()))
+                .flatMap(List::stream)
+                .toList();
+    }
+
     // 获取顶点的边
     Edge getEdge(String from, String to);
 

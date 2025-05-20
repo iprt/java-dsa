@@ -34,7 +34,7 @@ public class GraphAlgoTest {
     }
 
     @Test
-    public void testMst() {
+    public void testMstPrim() {
         String graphText = """
                 A B 1
                 A C 2
@@ -50,6 +50,30 @@ public class GraphAlgoTest {
 
         result.getEdges().stream().map(Edge.UNDIRECTED_TO_STRING).forEach(System.out::println);
         Assertions.assertEquals(6, result.getTotalWeight());
+    }
+
+    @Test
+    public void testMstKruskal() {
+        String graphText = """
+                0 1 4
+                0 5 8
+                1 5 11
+                1 2 8
+                5 6 7
+                2 6 2
+                5 4 8
+                4 6 4
+                2 3 3
+                4 3 3
+                """;
+        GraphUtils utils = new GraphUtils(false, true);
+        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
+
+        Mst algo = new Mst(utils.getGraph());
+        Mst.Result result = algo.kruskal();
+        result.getEdges().stream().map(Edge.UNDIRECTED_TO_STRING).forEach(System.out::println);
+        // 2 3 3 4 7 8
+        Assertions.assertEquals(2 + 3 + 3 + 4 + 7 + 8, result.getTotalWeight());
     }
 
 
