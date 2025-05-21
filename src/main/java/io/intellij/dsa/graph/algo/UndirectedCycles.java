@@ -38,11 +38,16 @@ public class UndirectedCycles extends GraphAlgo {
         return result;
     }
 
-    private void dfs(Vertex vertex, Set<String> visited, Set<String> stack, List<Vertex> path, Result record) {
+    // 保证每个节点都被深度遍历一次
+    // 某个节点在遍历的时候
+    // 1. 如果邻居未被访问，则递归调用 DFS 继续搜索（注意传递了路径的副本)
+    // 2. 如果邻居已被访问且在当前递归栈中，说明找到了一个环。记录从邻居到当前顶点的路径作为环
+    // 3. 递归结束后，当前节点出栈
+    private void dfs(Vertex vertex, Set<String> visited, Set<String> vertexStack, List<Vertex> path, Result record) {
         // 标记当前节点为已访问
         visited.add(vertex.name());
         // 将当前节点添加到递归栈中
-        stack.add(vertex.name());
+        vertexStack.add(vertex.name());
         // 将当前节点添加到路径中
         path.add(vertex);
 
@@ -52,8 +57,8 @@ public class UndirectedCycles extends GraphAlgo {
             Vertex neighbor = edge.getTo();
             if (!visited.contains(neighbor.name())) {
                 // Continue the DFS search
-                this.dfs(neighbor, visited, stack, new ArrayList<>(path), record);
-            } else if (stack.contains(neighbor.name())) {
+                this.dfs(neighbor, visited, vertexStack, new ArrayList<>(path), record);
+            } else if (vertexStack.contains(neighbor.name())) {
                 // Found a cycle, the neighbor is already in the current path
                 List<Vertex> cycle = new ArrayList<>();
                 int index = path.indexOf(neighbor);
@@ -64,7 +69,7 @@ public class UndirectedCycles extends GraphAlgo {
             }
         }
         // Backtrack: remove the current node from the path
-        stack.remove(vertex.name());
+        vertexStack.remove(vertex.name());
     }
 
     public static class Result {
