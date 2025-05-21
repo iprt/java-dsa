@@ -9,9 +9,16 @@ import org.apache.commons.lang3.StringUtils;
  * @since 2025-05-19
  */
 public abstract class GraphAlgo {
-    protected final Graph graph;
+    protected Graph graph;
 
     public GraphAlgo(Graph graph) {
+        if (graph == null) {
+            throw new IllegalArgumentException("Graph cannot be null");
+        }
+        this.graph = graph;
+    }
+
+    public void setGraph(Graph graph) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph cannot be null");
         }

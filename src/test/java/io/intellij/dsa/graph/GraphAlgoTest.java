@@ -2,6 +2,7 @@ package io.intellij.dsa.graph;
 
 import io.intellij.dsa.graph.algo.Components;
 import io.intellij.dsa.graph.algo.Dijkstra;
+import io.intellij.dsa.graph.algo.DirectedCycles;
 import io.intellij.dsa.graph.algo.Mst;
 import io.intellij.dsa.graph.algo.Traverse;
 import io.intellij.dsa.graph.algo.UndirectedCycles;
@@ -106,21 +107,74 @@ public class GraphAlgoTest {
 
     @Test
     public void testUndirectedCycles() {
-        UndirectedCycles algo = new UndirectedCycles(buildGraph("""
+        /*
+            A - B - C
+             \  |  /
+                D
+         */
+        UndirectedCycles cycleAnalysis = new UndirectedCycles(buildGraph("""
                 A B 1
-                A C 1
                 B C 1
                 C D 1
-                C E 1
-                D F 1
-                E F 1
-                """, false, true)
+                D A 1
+                B D 1
+                """, false, false)
         );
-        UndirectedCycles.Result result = algo.findCycles();
+        UndirectedCycles.Result result = cycleAnalysis.findCycles();
+        result.printCycles();
+        Assertions.assertEquals(3, result.getCycles().stream()
+                .filter(cycle -> cycle.size() > 2).count());
+
+        System.out.println(" --------------------- ");
+
+        /*
+            A  -  B
+             \   /
+               C
+              / \
+            D  -  E
+         */
+        cycleAnalysis.setGraph(buildGraph("""
+                A B 1
+                C A 1
+                C B 1
+                C D 1
+                C E 1
+                D E 1
+                """, false, false));
+
+        result = cycleAnalysis.findCycles();
         result.printCycles();
         Assertions.assertEquals(2, result.getCycles().stream()
                 .filter(cycle -> cycle.size() > 2).count());
 
+    }
+
+    @Test
+    public void testDirectedCycles() {
+        DirectedCycles cycleAnalysis = new DirectedCycles(buildGraph("""
+                A B 1
+                B C 1
+                C D 1
+                D E 1
+                E F 1
+                F A 1
+                """, true, false)
+        );
+        DirectedCycles.Result result = cycleAnalysis.findCycles();
+        result.printCycles();
+
+        System.out.println(" --------------------- ");
+
+        cycleAnalysis.setGraph(buildGraph("""
+                A B 1
+                B C 1
+                C D 1
+                D A 1
+                B D 1
+                """, true, false));
+        result = cycleAnalysis.findCycles();
+        result.printCycles();
     }
 
 }

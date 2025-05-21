@@ -65,7 +65,9 @@ public class UndirectedCycles extends GraphAlgo {
                 for (int i = index; i < path.size(); i++) {
                     cycle.add(path.get(i));
                 }
-                record.cycles.add(cycle);
+                record.addCycle(cycle);
+            } else {
+                this.dfs(neighbor, visited, vertexStack, new ArrayList<>(path), record);
             }
         }
         // Backtrack: remove the current node from the path
@@ -80,15 +82,26 @@ public class UndirectedCycles extends GraphAlgo {
             this.cycles = new ArrayList<>();
         }
 
-        public void printCycles() {
-            System.out.println("Cycles found:");
-            for (List<Vertex> cycle : cycles) {
-                this.printCycle(cycle);
+        final Set<String> cycleZip = new HashSet<>();
+
+        void addCycle(List<Vertex> cycle) {
+            String zip = cycle.stream().map(Vertex::name)
+                    .sorted()
+                    .collect(Collectors.joining(" "));
+            if (cycleZip.contains(zip)) {
+                return;
             }
+            cycleZip.add(zip);
+            this.cycles.add(cycle);
+        }
+
+        public void printCycles() {
+            System.out.println("Cycles Found|Cycle's Number = " + this.cycles.size());
+            cycles.forEach(this::printCycle);
         }
 
         private void printCycle(List<Vertex> cycle) {
-            System.out.println("Printing Cycle|size = " + cycle.size() + "|vertexes = " + cycle.stream().map(Vertex::name).collect(Collectors.joining(" ")));
+            System.out.println("Printing Cycle|Vertex's Number = " + cycle.size() + "|Vertexes = " + cycle.stream().map(Vertex::name).collect(Collectors.joining(" ")));
             String lineStart = " ".repeat(2);
 
             /*
@@ -107,7 +120,6 @@ public class UndirectedCycles extends GraphAlgo {
             // 是否是偶数
             boolean isEven = (cycle.size() % 2 == 0);
             int mid = isEven ? cycle.size() / 2 : cycle.size() / 2 + 1;
-
 
             // 打印上半部分
             List<Vertex> upper = cycle.subList(0, mid);

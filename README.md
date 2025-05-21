@@ -41,4 +41,8 @@
     - `Kruskal`算法：最小堆 + 并查集 + 切分
 - [无向图联通分量](src/main/java/io/intellij/dsa/graph/algo/Components.java)
 - [单源最短路径](src/main/java/io/intellij/dsa/graph/algo/Dijkstra.java)
+
+环分析: 节点标记 + 深度遍历 + 递归回溯
+
 - [无向图寻找所有环](src/main/java/io/intellij/dsa/graph/algo/UndirectedCycles.java)
+- [有向图寻找所有环](src/main/java/io/intellij/dsa/graph/algo/DirectedCycles.java)
