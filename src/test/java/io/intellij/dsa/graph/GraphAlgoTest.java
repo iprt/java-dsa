@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
 
+import static io.intellij.dsa.graph.GraphUtils.buildGraph;
+
 /**
  * GraphAlgoTest
  *
@@ -20,34 +22,27 @@ public class GraphAlgoTest {
 
     @Test
     public void testTraverse() {
-        String graphText = """
+        Traverse traverse = new Traverse(buildGraph("""
                 A B 1
                 A C 1
                 B D 1
                 C E 1
-                """;
-        GraphUtils utils = new GraphUtils(false, true);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-        Traverse traverse = new Traverse(utils.getGraph());
-
+                """, false, false)
+        );
         traverse.dfs("A");
         traverse.bfs("A");
     }
 
     @Test
     public void testMstPrim() {
-        String graphText = """
+        Mst mst = new Mst(buildGraph("""
                 A B 1
                 A C 2
                 B C 2
                 B D 3
                 C D 4
-                """;
-        GraphUtils utils = new GraphUtils(false, true);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-
-        Mst algo = new Mst(utils.getGraph());
-        Mst.Result result = algo.prim();
+                """, false, true));
+        Mst.Result result = mst.prim();
 
         result.getEdges().stream().map(Edge.UNDIRECTED_TO_STRING).forEach(System.out::println);
         Assertions.assertEquals(6, result.getTotalWeight());
@@ -55,7 +50,7 @@ public class GraphAlgoTest {
 
     @Test
     public void testMstKruskal() {
-        String graphText = """
+        Mst mst = new Mst(buildGraph("""
                 0 1 4
                 0 5 8
                 1 5 11
@@ -66,12 +61,8 @@ public class GraphAlgoTest {
                 4 6 4
                 2 3 3
                 4 3 3
-                """;
-        GraphUtils utils = new GraphUtils(false, true);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-
-        Mst algo = new Mst(utils.getGraph());
-        Mst.Result result = algo.kruskal();
+                """, false, true));
+        Mst.Result result = mst.kruskal();
         result.getEdges().stream().map(Edge.UNDIRECTED_TO_STRING).forEach(System.out::println);
         // 2 3 3 4 7 8
         Assertions.assertEquals(2 + 3 + 3 + 4 + 7 + 8, result.getTotalWeight());
@@ -80,25 +71,21 @@ public class GraphAlgoTest {
 
     @Test
     public void testComponents() {
-        String graphText = """
+        Components cps = new Components(buildGraph("""
                 A B 1
                 A C 1
                 D E 1
-                """;
-        GraphUtils utils = new GraphUtils(false, false);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-
-        Components cps = new Components(utils.getGraph());
-
-        Assertions.assertEquals(2, cps.count());
-        Assertions.assertTrue(cps.hasPath("B", "C"));
-        Assertions.assertFalse(cps.hasPath("A", "D"));
+                """, false, false)
+        );
+        Components.Result result = cps.compute();
+        Assertions.assertEquals(2, result.getCount());
+        Assertions.assertTrue(result.hasPath("B", "C"));
+        Assertions.assertFalse(result.hasPath("A", "D"));
     }
 
     @Test
     public void testDijkstra() {
-        // A -> C -> E -> F
-        String graphText = """
+        Dijkstra dijkstra = new Dijkstra(buildGraph("""
                 A B 3
                 A C 1
                 B D 3
@@ -108,12 +95,9 @@ public class GraphAlgoTest {
                 D F 2
                 E F 1
                 B F 8
-                """;
-        GraphUtils utils = new GraphUtils(false, true);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-
-        Dijkstra dijkstra = new Dijkstra(utils.getGraph());
-
+                """, false, true)
+        );
+        // A -> C -> E -> F
         Dijkstra.Result result = dijkstra.compute("A");
         Stream.of("B", "C", "D", "E", "F")
                 .map(result::getRoutes)
@@ -122,7 +106,7 @@ public class GraphAlgoTest {
 
     @Test
     public void testUndirectedCycles() {
-        String graphText = """
+        UndirectedCycles algo = new UndirectedCycles(buildGraph("""
                 A B 1
                 A C 1
                 B C 1
@@ -130,14 +114,10 @@ public class GraphAlgoTest {
                 C E 1
                 D F 1
                 E F 1
-                """;
-        GraphUtils utils = new GraphUtils(false, true);
-        utils.connect(graphText, GraphUtils.LINE_TO_EDGE_SPILT_SPACE);
-
-        UndirectedCycles algo = new UndirectedCycles(utils.getGraph());
+                """, false, true)
+        );
         UndirectedCycles.Result result = algo.findCycles();
         result.printCycles();
-
         Assertions.assertEquals(2, result.getCycles().stream()
                 .filter(cycle -> cycle.size() > 2).count());
 

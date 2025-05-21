@@ -1,8 +1,8 @@
 package io.intellij.dsa.graph;
 
-import io.intellij.dsa.graph.impl.DenseGraph;
-import io.intellij.dsa.graph.impl.SparseGraph;
 import org.junit.jupiter.api.Test;
+
+import static io.intellij.dsa.graph.GraphUtils.buildGraph;
 
 /**
  * GraphTest
@@ -11,23 +11,22 @@ import org.junit.jupiter.api.Test;
  * @since 2025-05-19
  */
 public class GraphTest {
+    final String graphText = """
+            A B 1
+            A C 1
+            B C 1
+            """;
 
     @Test
     public void testShowDenseGraph() {
-        Graph graph = new DenseGraph(false, false);
-        graph.connect("A", "B");
-        graph.connect("A", "C");
-        graph.connect("B", "C");
-        graph.showGraph();
+        buildGraph(GraphUtils.Type.DENSITY, graphText, false, false)
+                .showGraph();
     }
 
     @Test
     public void testShowSparseGraph() {
-        Graph graph = new SparseGraph(false, false);
-        graph.connect("A", "B");
-        graph.connect("A", "C");
-        graph.connect("B", "C");
-        graph.showGraph();
+        buildGraph(GraphUtils.Type.SPARSITY, graphText, true, false)
+                .showGraph();
     }
 
 }

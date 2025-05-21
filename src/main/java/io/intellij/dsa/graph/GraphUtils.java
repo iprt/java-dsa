@@ -3,7 +3,9 @@ package io.intellij.dsa.graph;
 import io.intellij.dsa.graph.impl.DenseGraph;
 import io.intellij.dsa.graph.impl.SparseGraph;
 import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -62,7 +64,6 @@ public class GraphUtils {
     }
 
     public GraphUtils(Type type, boolean directed, boolean weighted) {
-        // random boolean
         Random random = new Random();
         boolean randomBool = random.nextBoolean();
         if (type == Type.DENSITY) {
@@ -74,18 +75,42 @@ public class GraphUtils {
         }
     }
 
-    public void connect(String text, Function<String, EdgePO> lineToEdge) {
-        String[] lines = text.split("\n");
-        for (String line : lines) {
-            this.doConnect(line, lineToEdge);
+    public void connect(String graphText, Function<String, EdgePO> lineToEdge) {
+        this.connect(graphText, text -> {
+            String[] lines = text.split("\\r?\\n");
+            return List.of(lines);
+        }, lineToEdge);
+    }
+
+    public void connect(String graphText, Function<String, List<String>> textToLines, Function<String, EdgePO> lineToEdge) {
+        List<String> lines = textToLines.apply(graphText);
+        this.connect(lines, lineToEdge);
+    }
+
+    public void connect(List<String> lines, Function<String, EdgePO> lineToEdge) {
+        if (CollectionUtils.isNotEmpty(lines)) {
+            lines.forEach(line -> this.doConnect(line, lineToEdge));
         }
     }
+
 
     private void doConnect(String line, Function<String, EdgePO> lineToEdge) {
         EdgePO edge = lineToEdge.apply(line);
         if (edge != null) {
             graph.connect(edge.from, edge.to, edge.weight);
         }
+    }
+
+    public static Graph buildGraph(String graphText, boolean directed, boolean weighted) {
+        GraphUtils graphUtils = new GraphUtils(null, directed, weighted);
+        graphUtils.connect(graphText, LINE_TO_EDGE_SPILT_SPACE);
+        return graphUtils.getGraph();
+    }
+
+    public static Graph buildGraph(Type type, String graphText, boolean directed, boolean weighted) {
+        GraphUtils graphUtils = new GraphUtils(type, directed, weighted);
+        graphUtils.connect(graphText, LINE_TO_EDGE_SPILT_SPACE);
+        return graphUtils.getGraph();
     }
 
     public record EdgePO(String from, String to, double weight) {

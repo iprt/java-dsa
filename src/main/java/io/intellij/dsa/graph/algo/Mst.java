@@ -128,9 +128,8 @@ public class Mst extends GraphAlgo {
     }
 
     private void check() {
-        checkGraphNotEmpty().checkDirected(false).checkWeighted(true);
-        Components components = new Components(this.graph);
-        if (components.count() > 1) {
+        checkGraph().checkDirected(false).checkWeighted(true);
+        if (new Components(this.graph).compute().getCount() > 1) {
             throw new IllegalArgumentException("Graph is not connected");
         }
     }

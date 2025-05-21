@@ -30,7 +30,7 @@ public class Traverse extends GraphAlgo {
 
     public Traverse(Graph graph, Consumer<Vertex> vertexConsumer, Consumer<Edge> edgeConsumer) {
         super(graph);
-        checkGraphNotEmpty();
+        checkGraph();
         this.vertexConsumer = vertexConsumer;
         this.edgeConsumer = edgeConsumer;
     }

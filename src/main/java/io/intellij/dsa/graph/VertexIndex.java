@@ -28,10 +28,6 @@ public class VertexIndex {
     }
 
     public int size() {
-        return nameIndex.size();
-    }
-
-    int getIndex() {
         return vertices.size();
     }
 

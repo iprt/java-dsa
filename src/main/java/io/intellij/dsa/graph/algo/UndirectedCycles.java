@@ -21,7 +21,7 @@ public class UndirectedCycles extends GraphAlgo {
 
     public UndirectedCycles(Graph graph) {
         super(graph);
-        checkGraphNotEmpty().checkDirected(false);
+        checkGraph().checkDirected(false);
     }
 
     public Result findCycles() {
