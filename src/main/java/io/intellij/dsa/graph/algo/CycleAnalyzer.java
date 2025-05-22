@@ -13,29 +13,30 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Rings
+ * CycleAnalyzer
  *
  * @author tech@intellij.io
+ * @since 2025-05-22
  */
-public class UndirectedCycles extends GraphAlgo {
+public class CycleAnalyzer extends GraphAlgo {
 
-    public UndirectedCycles(Graph graph) {
+    public CycleAnalyzer(Graph graph) {
         super(graph);
-        checkGraph().checkDirected(false);
+        checkGraph();
     }
 
     public Result findCycles() {
-        Result result = new Result();
-        Set<String> visited = new HashSet<>();
-        Set<String> stack = new HashSet<>();
+        Result record = new Result(this.graph.isDirected());
         List<Vertex> vertices = this.graph.getVertices();
+        Set<String> visited = new HashSet<>();
+        // 全遍历
         for (Vertex vertex : vertices) {
-            if (!visited.contains(vertex.name())) {
-                // Start DFS from this vertex
-                dfs(vertex, visited, stack, new ArrayList<>(), result);
+            boolean hasVisited = visited.contains(vertex.name());
+            if (!hasVisited) {
+                this.dfs(vertex, visited, new ArrayList<>(), new HashSet<>(), record);
             }
         }
-        return result;
+        return record;
     }
 
     // 保证每个节点都被深度遍历一次
@@ -43,56 +44,65 @@ public class UndirectedCycles extends GraphAlgo {
     // 1. 如果邻居未被访问，则递归调用 DFS 继续搜索（注意传递了路径的副本)
     // 2. 如果邻居已被访问且在当前递归栈中，说明找到了一个环。记录从邻居到当前顶点的路径作为环
     // 3. 递归结束后，当前节点出栈
-    private void dfs(Vertex vertex, Set<String> visited, Set<String> vertexStack, List<Vertex> path, Result record) {
-        // 标记当前节点为已访问
-        visited.add(vertex.name());
-        // 将当前节点添加到递归栈中
-        vertexStack.add(vertex.name());
-        // 将当前节点添加到路径中
-        path.add(vertex);
+    private void dfs(Vertex current, Set<String> visited, List<Vertex> path, Set<String> marked, Result record) {
+        visited.add(current.name());
+        path.add(current);
+        marked.add(current.name());
 
         //  1. 如果邻居未被访问，则递归调用 DFS 继续搜索（注意传递了路径的副本)
         //  2. 如果邻居已被访问且在当前递归栈中，说明找到了一个环。记录从邻居到当前顶点的路径作为环
-        for (Edge edge : this.graph.adjacentEdges(vertex.name())) {
-            Vertex neighbor = edge.getTo();
-            if (!visited.contains(neighbor.name())) {
-                // Continue the DFS search
-                this.dfs(neighbor, visited, vertexStack, new ArrayList<>(path), record);
-            } else if (vertexStack.contains(neighbor.name())) {
-                // Found a cycle, the neighbor is already in the current path
-                List<Vertex> cycle = new ArrayList<>();
-                int index = path.indexOf(neighbor);
-                for (int i = index; i < path.size(); i++) {
-                    cycle.add(path.get(i));
-                }
-                record.addCycle(cycle);
+        for (Edge edge : this.graph.adjacentEdges(current.id())) {
+            Vertex next = edge.getTo();
+            if (!visited.contains(next.name())) {
+                this.dfs(next, visited, new ArrayList<>(path), marked, record);
             } else {
-                this.dfs(neighbor, visited, vertexStack, new ArrayList<>(path), record);
+                // 核心理解 作用域是 current Vertex
+                if (marked.contains(next.name())) {
+                    // 说明有环
+                    List<Vertex> cycle = new ArrayList<>();
+                    int start = path.indexOf(next);
+                    for (int i = start; i < path.size(); i++) {
+                        cycle.add(path.get(i));
+                    }
+                    // record.cycles.add(cycle);
+                    record.addCycle(cycle);
+                } else {
+                    // important
+                    this.dfs(next, visited, new ArrayList<>(path), marked, record);
+                }
             }
         }
-        // Backtrack: remove the current node from the path
-        vertexStack.remove(vertex.name());
+        // 出栈
+        marked.remove(current.name());
     }
 
     public static class Result {
+        private final boolean directed;
+
         @Getter
         private final List<List<Vertex>> cycles;
 
-        public Result() {
+
+        private Result(boolean directed) {
+            this.directed = directed;
             this.cycles = new ArrayList<>();
         }
 
         final Set<String> cycleZip = new HashSet<>();
 
         void addCycle(List<Vertex> cycle) {
-            String zip = cycle.stream().map(Vertex::name)
-                    .sorted()
-                    .collect(Collectors.joining(" "));
-            if (cycleZip.contains(zip)) {
-                return;
+            if (!directed) {
+                String zip = cycle.stream().map(Vertex::name)
+                        .sorted()
+                        .collect(Collectors.joining(" "));
+                if (cycleZip.contains(zip)) {
+                    return;
+                }
+                cycleZip.add(zip);
+                this.cycles.add(cycle);
+            } else {
+                this.cycles.add(cycle);
             }
-            cycleZip.add(zip);
-            this.cycles.add(cycle);
         }
 
         public void printCycles() {
@@ -104,18 +114,19 @@ public class UndirectedCycles extends GraphAlgo {
             System.out.println("Printing Cycle|Vertex's Number = " + cycle.size() + "|Vertexes = " + cycle.stream().map(Vertex::name).collect(Collectors.joining(" ")));
             String lineStart = " ".repeat(2);
 
-            /*
-              A - B - C
-              |       |
-              D - E - F
-             */
             // 打印环，如果只有两个节点，则打印成 A - B
             // 如果超过两个节点，打印成三行，打印出一个可以理解的环
             if (cycle.size() == 2) {
-                System.out.println(lineStart + cycle.get(0).name() + " - " + cycle.get(1).name());
+                System.out.println(lineStart + cycle.get(0).name() + " <=> " + cycle.get(1).name());
                 System.out.println();
                 return;
             }
+
+             /*
+              A -> B -> C
+              |        |
+              D - E - F
+             */
 
             // 是否是偶数
             boolean isEven = (cycle.size() % 2 == 0);
@@ -123,21 +134,21 @@ public class UndirectedCycles extends GraphAlgo {
 
             // 打印上半部分
             List<Vertex> upper = cycle.subList(0, mid);
-            // A - B - C
+            // A -> B -> C
             StringBuilder upBuilder = new StringBuilder(lineStart);
             for (int i = 0; i < upper.size(); i++) {
                 if (i == upper.size() - 1) {
                     upBuilder.append(upper.get(i).name());
                 } else {
-                    upBuilder.append(upper.get(i).name()).append(" - ");
+                    upBuilder.append(upper.get(i).name()).append(" -> ");
                 }
             }
             System.out.println(upBuilder);
 
             // 打印中间部分
-            String midStart = lineStart + "|";
-            String midEnd = isEven ? "|" : "/";
-            int sub = isEven ? 2 : 3;
+            String midStart = lineStart + (directed ? "↑" : "|");
+            String midEnd = isEven ? (directed ? "↓" : "|") : (directed ? "↙" : "/");
+            int sub = isEven ? 2 : (directed ? 4 : 3);
             System.out.println(midStart + " ".repeat(upBuilder.length() - lineStart.length() - sub) + midEnd);
 
             // 打印下半部分
@@ -148,7 +159,7 @@ public class UndirectedCycles extends GraphAlgo {
                 if (i == 0) {
                     downBuilder.append(lower.get(i).name());
                 } else {
-                    downBuilder.append(lower.get(i).name()).append(" - ");
+                    downBuilder.append(lower.get(i).name()).append(" <- ");
                 }
             }
             System.out.println(downBuilder);

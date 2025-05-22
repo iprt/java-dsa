@@ -1,11 +1,10 @@
 package io.intellij.dsa.graph;
 
 import io.intellij.dsa.graph.algo.Components;
+import io.intellij.dsa.graph.algo.CycleAnalyzer;
 import io.intellij.dsa.graph.algo.Dijkstra;
-import io.intellij.dsa.graph.algo.DirectedCycles;
 import io.intellij.dsa.graph.algo.Mst;
 import io.intellij.dsa.graph.algo.Traverse;
-import io.intellij.dsa.graph.algo.UndirectedCycles;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -112,7 +111,7 @@ public class GraphAlgoTest {
              \  |  /
                 D
          */
-        UndirectedCycles cycleAnalysis = new UndirectedCycles(buildGraph("""
+        CycleAnalyzer analyzer = new CycleAnalyzer(buildGraph("""
                 A B 1
                 B C 1
                 C D 1
@@ -120,7 +119,7 @@ public class GraphAlgoTest {
                 B D 1
                 """, false, false)
         );
-        UndirectedCycles.Result result = cycleAnalysis.findCycles();
+        CycleAnalyzer.Result result = analyzer.findCycles();
         result.printCycles();
         Assertions.assertEquals(3, result.getCycles().stream()
                 .filter(cycle -> cycle.size() > 2).count());
@@ -134,7 +133,7 @@ public class GraphAlgoTest {
               / \
             D  -  E
          */
-        cycleAnalysis.setGraph(buildGraph("""
+        analyzer.setGraph(buildGraph("""
                 A B 1
                 C A 1
                 C B 1
@@ -143,7 +142,7 @@ public class GraphAlgoTest {
                 D E 1
                 """, false, false));
 
-        result = cycleAnalysis.findCycles();
+        result = analyzer.findCycles();
         result.printCycles();
         Assertions.assertEquals(2, result.getCycles().stream()
                 .filter(cycle -> cycle.size() > 2).count());
@@ -152,7 +151,7 @@ public class GraphAlgoTest {
 
     @Test
     public void testDirectedCycles() {
-        DirectedCycles cycleAnalysis = new DirectedCycles(buildGraph("""
+        CycleAnalyzer analyzer = new CycleAnalyzer(buildGraph("""
                 A B 1
                 B C 1
                 C D 1
@@ -161,20 +160,29 @@ public class GraphAlgoTest {
                 F A 1
                 """, true, false)
         );
-        DirectedCycles.Result result = cycleAnalysis.findCycles();
+        CycleAnalyzer.Result result = analyzer.findCycles();
         result.printCycles();
 
         System.out.println(" --------------------- ");
+        Assertions.assertEquals(1, result.getCycles().size());
 
-        cycleAnalysis.setGraph(buildGraph("""
+        /*
+                 B
+              ↗  ↓   ↘
+          A      ↓     C
+            ↖    ↓   ↙
+                 D
+         */
+        analyzer.setGraph(buildGraph("""
                 A B 1
                 B C 1
                 C D 1
                 D A 1
                 B D 1
                 """, true, false));
-        result = cycleAnalysis.findCycles();
+        result = analyzer.findCycles();
         result.printCycles();
+        Assertions.assertEquals(2, result.getCycles().size());
     }
 
 }
