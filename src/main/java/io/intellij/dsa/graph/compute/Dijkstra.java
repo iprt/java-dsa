@@ -59,7 +59,7 @@ public class Dijkstra extends GraphCompute {
             throw new IllegalArgumentException("Source vertex cannot be null");
         }
         Result result = new Result(source, this.graph);
-        PriorityQueue<EdgeWrapper> queue = new PriorityQueue<>(
+        PriorityQueue<EdgeWrapper> minHeap = new PriorityQueue<>(
                 this.graph.adjacentEdges(source.id()).stream()
                         .map(edge -> new EdgeWrapper(edge, this.weighted)).toList()
         );
@@ -70,8 +70,8 @@ public class Dijkstra extends GraphCompute {
                 /          \
                A --- 4 ---  C
          */
-        while (!queue.isEmpty()) {
-            EdgeWrapper shortest = queue.poll();
+        while (!minHeap.isEmpty()) {
+            EdgeWrapper shortest = minHeap.poll();
 
             Vertex to = shortest.getTo();
             if (result.calculateCompleted.contains(to.name())) {
@@ -114,7 +114,7 @@ public class Dijkstra extends GraphCompute {
                     result.distanceToSource.put(toto.name(), updatedWeight);
                     // 更新 to 的 edge 的 totalWeight
                     toEdgeWrapper.setTotalWeight(updatedWeight);
-                    queue.add(toEdgeWrapper);
+                    minHeap.add(toEdgeWrapper);
                 } else {
                     // toto 记录过pathFrom
                     double oldDistance = result.distanceToSource.get(toto.name());
@@ -123,7 +123,7 @@ public class Dijkstra extends GraphCompute {
                         result.distanceToSource.put(toto.name(), updatedWeight);
                         // 更新 to 的 edge 的 totalWeight
                         toEdgeWrapper.setTotalWeight(updatedWeight);
-                        queue.add(toEdgeWrapper);
+                        minHeap.add(toEdgeWrapper);
                     }
                 }
             }
