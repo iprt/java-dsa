@@ -1,8 +1,8 @@
-package io.intellij.dsa.graph.algo;
+package io.intellij.dsa.graph.compute;
 
 import io.intellij.dsa.graph.Edge;
 import io.intellij.dsa.graph.Graph;
-import io.intellij.dsa.graph.GraphAlgo;
+import io.intellij.dsa.graph.GraphCompute;
 import io.intellij.dsa.graph.Vertex;
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author tech@intellij.io
  * @since 2025-05-22
  */
-public class CycleAnalyzer extends GraphAlgo {
+public class CycleAnalyzer extends GraphCompute {
 
     public CycleAnalyzer(Graph graph) {
         super(graph);

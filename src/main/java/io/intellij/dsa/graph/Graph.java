@@ -35,7 +35,7 @@ public interface Graph {
         if (isEmpty()) {
             return List.of();
         }
-        return getVertexIndex().getVertices()
+        return vertexIndex().getVertices()
                 .stream().map(vertex -> adjacentEdges(vertex.id()))
                 .flatMap(List::stream)
                 .toList();
@@ -62,7 +62,7 @@ public interface Graph {
     void showGraph();
 
     // 获取顶点的索引
-    VertexIndex getVertexIndex();
+    VertexIndex vertexIndex();
 
     // 获取邻接矩阵
     default Double[][] getAdjacencyMatrix() {

@@ -8,10 +8,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author tech@intellij.io
  * @since 2025-05-19
  */
-public abstract class GraphAlgo {
+public abstract class GraphCompute {
     protected Graph graph;
 
-    public GraphAlgo(Graph graph) {
+    public GraphCompute(Graph graph) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph cannot be null");
         }
@@ -25,21 +25,21 @@ public abstract class GraphAlgo {
         this.graph = graph;
     }
 
-    public GraphAlgo checkGraph() {
+    public GraphCompute checkGraph() {
         if (graph.isEmpty()) {
             throw new IllegalArgumentException("Graph is empty");
         }
         return this;
     }
 
-    public GraphAlgo checkDirected(boolean expectedDirected) {
+    public GraphCompute checkDirected(boolean expectedDirected) {
         if (graph.isDirected() != expectedDirected) {
             throw new IllegalArgumentException("Graph must be " + (expectedDirected ? "directed" : "undirected"));
         }
         return this;
     }
 
-    public GraphAlgo checkWeighted(boolean expectedWeighted) {
+    public GraphCompute checkWeighted(boolean expectedWeighted) {
         if (graph.isWeighted() != expectedWeighted) {
             throw new IllegalArgumentException("Graph must be " + (expectedWeighted ? "weighted" : "unweighted"));
         }
@@ -50,7 +50,7 @@ public abstract class GraphAlgo {
         if (StringUtils.isBlank(vertexName) && throwOrReturn) {
             throw new IllegalArgumentException("Vertex name cannot be null or empty");
         }
-        Vertex vertex = graph.getVertexIndex().getVertex(vertexName);
+        Vertex vertex = graph.vertexIndex().getVertex(vertexName);
         if (vertex == null && throwOrReturn) {
             throw new IllegalArgumentException("Vertex not found in graph");
         }

@@ -1,18 +1,17 @@
-package io.intellij.dsa.graph.algo;
+package io.intellij.dsa.graph.compute;
 
 import io.intellij.dsa.graph.Edge;
 import io.intellij.dsa.graph.Graph;
-import io.intellij.dsa.graph.GraphAlgo;
+import io.intellij.dsa.graph.GraphCompute;
 import io.intellij.dsa.graph.Vertex;
+import io.intellij.dsa.uf.IndexedUnionFind;
+import io.intellij.dsa.uf.UnionFind;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ import java.util.Set;
  *
  * @author tech@intellij.io
  */
-public class Mst extends GraphAlgo {
+public class Mst extends GraphCompute {
 
     public Mst(Graph graph) {
         super(graph);
@@ -29,7 +28,7 @@ public class Mst extends GraphAlgo {
     }
 
     public Result prim() {
-        Vertex start = this.graph.getVertexIndex().getVertex(0);
+        Vertex start = this.graph.vertexIndex().getVertex(0);
         return this.prim(start, new HashSet<>());
     }
 
@@ -62,50 +61,43 @@ public class Mst extends GraphAlgo {
     // kruskal: 堆 + 并查集 + 切分
     public Result kruskal() {
         Result result = new Result();
-        Map<String, Integer> visitedUf = new HashMap<>();
+        UnionFind<Vertex> vertexUF = new IndexedUnionFind<>(Vertex::id);
+
         List<Edge> edges = this.graph.getEdges();
         PriorityQueue<Edge> queue = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
         queue.addAll(edges);
 
-        int index = 0;
         while (!queue.isEmpty()) {
-            Edge min = queue.poll();
-            String from = min.getFrom().name();
-            String to = min.getTo().name();
+            Edge minE = queue.poll();
+            Vertex fromV = minE.getFrom(), toV = minE.getTo();
 
-            Integer fromUF = visitedUf.get(from);
-            Integer toUF = visitedUf.get(to);
+            boolean containsFrom = vertexUF.contains(fromV);
+            boolean containsTo = vertexUF.contains(toV);
 
-            if (fromUF == null && toUF == null) {
-                index++;
+            if (!containsFrom && !containsTo) {
                 // 这条边第一次被访问
-                visitedUf.put(from, index);
-                visitedUf.put(to, index);
-                result.edges.add(min);
-                result.totalWeight += min.getWeight();
+                vertexUF.union(fromV, toV);
+                result.edges.add(minE);
+                result.totalWeight += minE.getWeight();
             } else {
-                if (fromUF != null && toUF == null) {
+                if (containsFrom && !containsTo) {
                     // 其中有一个顶点被访问过,说明在同一个集合中
-                    visitedUf.put(to, fromUF);
-                    result.edges.add(min);
-                    result.totalWeight += min.getWeight();
-                } else if (fromUF == null) {
+                    vertexUF.union(fromV, toV);
+                    result.edges.add(minE);
+                    result.totalWeight += minE.getWeight();
+                } else if (!containsFrom) {
                     // 其中有一个顶点被访问过,说明在同一个集合中
-                    visitedUf.put(from, toUF);
-                    result.edges.add(min);
-                    result.totalWeight += min.getWeight();
+                    vertexUF.union(toV, fromV);
+                    result.edges.add(minE);
+                    result.totalWeight += minE.getWeight();
                 } else {
                     // 判断两个顶点是不是切分的两边
-                    if (!fromUF.equals(toUF)) {
+                    if (!vertexUF.isConnected(fromV, toV)) {
                         // 说明不在同一个集合中
-                        result.edges.add(min);
-                        result.totalWeight += min.getWeight();
-                        for (Map.Entry<String, Integer> entry : visitedUf.entrySet()) {
-                            if (Objects.equals(entry.getValue(), toUF)) {
-                                // 更新集合
-                                visitedUf.put(entry.getKey(), fromUF);
-                            }
-                        }
+                        result.edges.add(minE);
+                        result.totalWeight += minE.getWeight();
+
+                        vertexUF.union(fromV, toV);
                     }
                 }
             }

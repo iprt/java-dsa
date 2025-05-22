@@ -190,7 +190,7 @@ public class DenseGraph implements Graph {
     }
 
     @Override
-    public VertexIndex getVertexIndex() {
+    public VertexIndex vertexIndex() {
         return this.vertexIndex;
     }
 

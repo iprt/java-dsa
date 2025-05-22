@@ -1,8 +1,8 @@
-package io.intellij.dsa.graph.algo;
+package io.intellij.dsa.graph.compute;
 
 import io.intellij.dsa.graph.Edge;
 import io.intellij.dsa.graph.Graph;
-import io.intellij.dsa.graph.GraphAlgo;
+import io.intellij.dsa.graph.GraphCompute;
 import io.intellij.dsa.graph.Vertex;
 import lombok.Setter;
 
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  *
  * @author tech@intellij.io
  */
-public class Traverse extends GraphAlgo {
+public class Traverse extends GraphCompute {
     @Setter
     private Consumer<Vertex> vertexConsumer;
 

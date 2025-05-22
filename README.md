@@ -31,17 +31,17 @@
 - [稠密图 邻接矩阵](src/main/java/io/intellij/dsa/graph/impl/DenseGraph.java)
 - [稀疏图 邻接表](src/main/java/io/intellij/dsa/graph/impl/SparseGraph.java)
 
-[图中的算法](src/main/java/io/intellij/dsa/graph/algo)
+[图中的算法](src/main/java/io/intellij/dsa/graph/compute)
 
-- [图的遍历](src/main/java/io/intellij/dsa/graph/algo/Traverse.java)
+- [图的遍历](src/main/java/io/intellij/dsa/graph/compute/Traverse.java)
     - 深度遍历(`dfs`)
     - 广度遍历(`bfs`)
-- [最小生成树](src/main/java/io/intellij/dsa/graph/algo/Mst.java)
+- [最小生成树](src/main/java/io/intellij/dsa/graph/compute/Mst.java)
     - `Prim`算法：广度遍历 + 切分
     - `Kruskal`算法：最小堆 + 并查集 + 切分
-- [无向图联通分量](src/main/java/io/intellij/dsa/graph/algo/Components.java)
-- [单源最短路径](src/main/java/io/intellij/dsa/graph/algo/Dijkstra.java)
+- [无向图联通分量](src/main/java/io/intellij/dsa/graph/compute/Components.java)
+- [单源最短路径](src/main/java/io/intellij/dsa/graph/compute/Dijkstra.java)
 
 - 环分析: 节点标记 + 深度遍历 + 递归回溯
-    - [无向图寻找所有环](src/main/java/io/intellij/dsa/graph/algo/UndirectedCycles.java)
-    - [有向图寻找所有环](src/main/java/io/intellij/dsa/graph/algo/DirectedCycles.java)
+    - [无向图寻找所有环](src/main/java/io/intellij/dsa/graph/compute/UndirectedCycles.java)
+    - [有向图寻找所有环](src/main/java/io/intellij/dsa/graph/compute/DirectedCycles.java)

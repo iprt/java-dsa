@@ -93,7 +93,6 @@ public class GraphUtils {
         }
     }
 
-
     private void doConnect(String line, Function<String, EdgePO> lineToEdge) {
         EdgePO edge = lineToEdge.apply(line);
         if (edge != null) {

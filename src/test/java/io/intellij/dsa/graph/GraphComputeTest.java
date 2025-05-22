@@ -1,10 +1,10 @@
 package io.intellij.dsa.graph;
 
-import io.intellij.dsa.graph.algo.Components;
-import io.intellij.dsa.graph.algo.CycleAnalyzer;
-import io.intellij.dsa.graph.algo.Dijkstra;
-import io.intellij.dsa.graph.algo.Mst;
-import io.intellij.dsa.graph.algo.Traverse;
+import io.intellij.dsa.graph.compute.Components;
+import io.intellij.dsa.graph.compute.CycleAnalyzer;
+import io.intellij.dsa.graph.compute.Dijkstra;
+import io.intellij.dsa.graph.compute.Mst;
+import io.intellij.dsa.graph.compute.Traverse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import static io.intellij.dsa.graph.GraphUtils.buildGraph;
  * @author tech@intellij.io
  * @since 2025-05-19
  */
-public class GraphAlgoTest {
+public class GraphComputeTest {
 
     @Test
     public void testTraverse() {

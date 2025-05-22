@@ -44,6 +44,9 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
 
     @SuppressWarnings("unchecked")
     private T doContains(T data) {
+        if (data == null) {
+            return null;
+        }
         int index = getIndex(data);
         if (index >= dataArr.length) {
             return null;
@@ -53,14 +56,11 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
 
     @Override
     public boolean add(T data) {
-        if (data == null) {
-            return false;
-        }
-        return Objects.nonNull(add(data, true));
+        return Objects.nonNull(doAdd(data, true));
     }
 
     @SuppressWarnings("unchecked")
-    private T add(T data, boolean replace) {
+    private T doAdd(T data, boolean replace) {
         if (data == null) {
             return null;
         }
@@ -86,8 +86,8 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
 
     @Override
     public boolean union(T x, T y) {
-        x = add(x, false);
-        y = add(y, false);
+        x = doAdd(x, false);
+        y = doAdd(y, false);
         if (x == null || y == null) {
             return false;
         }

@@ -1,15 +1,14 @@
-package io.intellij.dsa.graph.algo;
+package io.intellij.dsa.graph.compute;
 
 import io.intellij.dsa.graph.Edge;
 import io.intellij.dsa.graph.Graph;
-import io.intellij.dsa.graph.GraphAlgo;
+import io.intellij.dsa.graph.GraphCompute;
 import io.intellij.dsa.graph.Vertex;
+import io.intellij.dsa.uf.IndexedUnionFind;
+import io.intellij.dsa.uf.UnionFind;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Components
@@ -19,7 +18,7 @@ import java.util.Objects;
  * @author tech@intellij.io
  * @since 2025-05-19
  */
-public class Components extends GraphAlgo {
+public class Components extends GraphCompute {
 
     public Components(Graph graph) {
         super(graph);
@@ -31,7 +30,7 @@ public class Components extends GraphAlgo {
         Result result = new Result(this.graph);
         List<Vertex> vertices = this.graph.getVertices();
         for (Vertex vertex : vertices) {
-            if (!result.visited.containsKey(vertex.name())) {
+            if (!result.visited.contains(vertex)) {
                 result.count = result.count + 1;
                 this.compute(vertex, result);
             }
@@ -41,37 +40,38 @@ public class Components extends GraphAlgo {
 
     // 递归计算
     void compute(Vertex vertex, Result result) {
-        result.visited.put(vertex.name(), result.count);
-
-        List<Edge> edges = this.graph.adjacentEdges(vertex.name());
-        for (Edge edge : edges) {
-            Vertex neighbor = edge.getTo();
-            if (!result.visited.containsKey(neighbor.name())) {
-                result.visited.put(neighbor.name(), result.count);
-                this.compute(neighbor, result);
+        // result.visited.put(vertex.name(), result.count);
+        result.visited.add(vertex);
+        for (Edge edge : this.graph.adjacentEdges(vertex.name())) {
+            Vertex next = edge.getTo();
+            if (!result.visited.contains(next)) {
+                this.compute(next, result);
             }
+            result.visited.union(vertex, next);
         }
     }
 
     public static class Result {
-        @Getter
         private final Graph graph;
+
         @Getter
         private int count;
-        private final Map<String, Integer> visited;
+        // private final Map<String, Integer> visited;
+        private final UnionFind<Vertex> visited;
 
-        Result(Graph graph) {
+        private Result(Graph graph) {
             this.graph = graph;
-            this.visited = new HashMap<>();
+            this.visited = new IndexedUnionFind<>(Vertex::id);
         }
 
         public boolean hasPath(String source, String target) {
-            Integer sourceGroup = this.visited.get(source);
-            Integer targetGroup = this.visited.get(target);
-            if (sourceGroup == null || targetGroup == null) {
+            Vertex sourceV = this.graph.vertexIndex().getVertex(source);
+            Vertex targetV = this.graph.vertexIndex().getVertex(target);
+
+            if (sourceV == null || targetV == null) {
                 return false;
             }
-            return Objects.equals(sourceGroup, targetGroup);
+            return this.visited.isConnected(sourceV, targetV);
         }
 
     }
