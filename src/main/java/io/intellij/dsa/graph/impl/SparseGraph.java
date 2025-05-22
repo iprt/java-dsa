@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * SparseGraph 稀疏图
@@ -100,7 +100,7 @@ public class SparseGraph implements Graph {
         int toId = to.id();
 
         if (fromId + 1 > adjacencyList.size()) {
-            adjacencyList.add(new HashMap<>());
+            adjacencyList.add(new TreeMap<>());
         }
         Map<Integer, Double> fromMap = adjacencyList.get(fromId);
         if (weighted) {
