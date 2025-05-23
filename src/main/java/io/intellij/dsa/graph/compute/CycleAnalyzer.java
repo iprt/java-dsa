@@ -82,7 +82,6 @@ public class CycleAnalyzer extends GraphCompute {
         @Getter
         private final List<List<Vertex>> cycles;
 
-
         private Result(boolean directed) {
             this.directed = directed;
             this.cycles = new ArrayList<>();

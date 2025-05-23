@@ -1,7 +1,8 @@
 package io.intellij.dsa.uf;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.function.Function;
 
 /**
@@ -12,11 +13,12 @@ import java.util.function.Function;
 public class IndexedUnionFind<T> implements UnionFind<T> {
     private final Function<T, Integer> indexFunction;
     // 存储元素
-    private Object[] dataArr;
+    private Object[] storage;
+
     // 存储元素的父节点索引
     private Integer[] parent;
     // 存储元素的子节点索引集合
-    private TreeSet<Integer>[] children;
+    private List<Integer>[] children;
 
     private int count;
 
@@ -27,9 +29,9 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
         }
         this.indexFunction = indexFunc;
         this.count = 0;
-        dataArr = new Object[2];
+        storage = new Object[2];
         parent = new Integer[2];
-        children = new TreeSet[2];
+        children = new ArrayList[2];
     }
 
     @Override
@@ -48,10 +50,10 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
             return null;
         }
         int index = getIndex(data);
-        if (index >= dataArr.length) {
+        if (index < 0 || index >= storage.length) {
             return null;
         }
-        return (T) this.dataArr[index];
+        return (T) this.storage[index];
     }
 
     @Override
@@ -69,17 +71,17 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
             return null;
         }
         this.expand(dataIndex + 1);
-        if (this.dataArr[dataIndex] != null) {
+        if (this.storage[dataIndex] != null) {
             if (replace) {
-                this.dataArr[dataIndex] = data;
+                this.storage[dataIndex] = data;
                 return data;
             }
-            return (T) this.dataArr[dataIndex];
+            return (T) this.storage[dataIndex];
         }
 
-        this.dataArr[dataIndex] = data;
+        storage[dataIndex] = data;
         parent[dataIndex] = dataIndex;
-        children[dataIndex] = new TreeSet<>();
+        children[dataIndex] = new ArrayList<>();
         count++;
         return data;
     }
@@ -96,19 +98,19 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
     }
 
     private void union(int source, int current) {
-        int sourceParent = getParent(source);
-        int curParentIdx = getParent(current);
+        int srcParent = getParent(source);
+        int curParent = getParent(current);
         // 已连接
-        if (sourceParent == curParentIdx) {
+        if (srcParent == curParent) {
             return;
         }
-        // 连接
-        parent[curParentIdx] = sourceParent;
 
-        children[sourceParent].add(current);
-        children[sourceParent].addAll(children[curParentIdx]);
-        children[curParentIdx].forEach(child -> parent[child] = sourceParent);
-        children[curParentIdx].clear();
+        // 树压缩
+        parent[curParent] = srcParent;
+        children[srcParent].add(curParent);
+        children[srcParent].addAll(children[curParent]);
+        children[curParent].forEach(child -> parent[child] = srcParent);
+        children[curParent].clear();
     }
 
     private int getParent(int index) {
@@ -139,14 +141,14 @@ public class IndexedUnionFind<T> implements UnionFind<T> {
     // expand the data array to accommodate new elements
     @SuppressWarnings("unchecked")
     private void expand(int newSize) {
-        if (newSize > dataArr.length) {
+        if (newSize > storage.length) {
             Object[] newData = new Object[newSize];
             Integer[] newParent = new Integer[newSize];
-            TreeSet<Integer>[] newChildren = new TreeSet[newSize];
-            System.arraycopy(dataArr, 0, newData, 0, dataArr.length);
+            List<Integer>[] newChildren = new ArrayList[newSize];
+            System.arraycopy(storage, 0, newData, 0, storage.length);
             System.arraycopy(parent, 0, newParent, 0, parent.length);
             System.arraycopy(children, 0, newChildren, 0, children.length);
-            dataArr = newData;
+            storage = newData;
             parent = newParent;
             children = newChildren;
         }
