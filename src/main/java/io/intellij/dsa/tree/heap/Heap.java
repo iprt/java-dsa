@@ -1,16 +1,16 @@
 package io.intellij.dsa.tree.heap;
 
 /**
- * Heap 最大堆的实现
+ * Heap 堆的实现
  *
  * @author tech@intellij.io
  * @since 2025-05-13
  */
-public interface Heap<T extends Comparable<T>> extends Iterable<T> {
+public interface Heap<T> extends Iterable<T> {
 
     enum Type {
+        MIN,
         MAX,
-        MIN
     }
 
     int size();
@@ -25,7 +25,7 @@ public interface Heap<T extends Comparable<T>> extends Iterable<T> {
 
     T get();
 
-    Type getType();
+    Type type();
 
     void clear();
 

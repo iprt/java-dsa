@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +73,7 @@ public class Dijkstra extends GraphCompute {
             EdgeWrapper shortest = minHeap.poll();
 
             Vertex to = shortest.getTo();
-            if (result.calculateCompleted.contains(to.name())) {
+            if (result.calculateCompleted[to.id()]) {
                 continue;
             }
 
@@ -101,7 +100,7 @@ public class Dijkstra extends GraphCompute {
                 double toEdgeWeight = toEdgeWrapper.getEdgeWeight();
                 Vertex toto = toEdgeWrapper.getTo();
 
-                if (result.calculateCompleted.contains(toto.name())) {
+                if (result.calculateCompleted[toto.id()]) {
                     // toto 已经计算过了
                     continue;
                 }
@@ -128,7 +127,7 @@ public class Dijkstra extends GraphCompute {
                 }
             }
             // 标记pivotal已经完全计算
-            result.calculateCompleted.add(to.name());
+            result.calculateCompleted[to.id()] = true;
 
             // 如果指定了目标节点，且已经计算过了，则退出
             if (canBreak(breakFilter, to.name())) {
@@ -178,7 +177,7 @@ public class Dijkstra extends GraphCompute {
         private final Graph graph;
 
         // 计算完成的节点
-        private final Set<String> calculateCompleted;
+        private final boolean[] calculateCompleted;
         @Getter
         private final Map<String, Double> distanceToSource;
         @Getter
@@ -189,7 +188,7 @@ public class Dijkstra extends GraphCompute {
             this.source = source;
             this.graph = graph;
 
-            this.calculateCompleted = new HashSet<>();
+            this.calculateCompleted = new boolean[graph.verticesNum()];
             this.distanceToSource = new HashMap<>();
             this.pathFrom = new HashMap<>();
 
@@ -197,7 +196,7 @@ public class Dijkstra extends GraphCompute {
         }
 
         private void init() {
-            this.calculateCompleted.add(source.name());
+            this.calculateCompleted[source.id()] = true;
             this.distanceToSource.put(source.name(), 0.0);
         }
 

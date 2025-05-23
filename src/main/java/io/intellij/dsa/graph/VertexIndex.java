@@ -3,9 +3,9 @@ package io.intellij.dsa.graph;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * VertexIndex
@@ -20,7 +20,7 @@ public class VertexIndex {
 
     public VertexIndex() {
         this.vertices = new ArrayList<>();
-        this.nameIndex = new HashMap<>();
+        this.nameIndex = new TreeMap<>();
     }
 
     public boolean isEmpty() {

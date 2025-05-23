@@ -6,10 +6,8 @@ import io.intellij.dsa.graph.GraphCompute;
 import io.intellij.dsa.graph.Vertex;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -52,15 +50,15 @@ public class Traverse extends GraphCompute {
         }
         initConsumer();
         System.out.println("\nDFS traversal starting from vertex: " + vertexName);
-        this.dfs(vertex, vertexConsumer, edgeConsumer, new HashSet<>());
+        this.dfs(vertex, vertexConsumer, edgeConsumer, new boolean[this.graph.getVertices().size()]);
         System.out.println("DFS traversal completed.\n");
     }
 
-    private void dfs(Vertex vertex, Consumer<Vertex> vc, Consumer<Edge> ec, Set<String> visited) {
-        visited.add(vertex.name());
+    private void dfs(Vertex vertex, Consumer<Vertex> vc, Consumer<Edge> ec, boolean[] visited) {
+        visited[vertex.id()] = true;
         vc.accept(vertex);
         this.graph.adjacentEdges(vertex.id()).stream()
-                .filter(edge -> !visited.contains(edge.getTo().name()))
+                .filter(edge -> !visited[edge.getTo().id()])
                 .peek(ec)
                 .map(Edge::getTo)
                 .forEach(other -> dfs(other, vc, ec, visited));
@@ -75,20 +73,20 @@ public class Traverse extends GraphCompute {
         }
         initConsumer();
         System.out.println("\nBFS traversal starting from vertex: " + vertexName);
-        this.bfs(vertex, this.vertexConsumer, this.edgeConsumer, new HashSet<>());
+        this.bfs(vertex, this.vertexConsumer, this.edgeConsumer, new boolean[this.graph.getVertices().size()]);
         System.out.println("BFS traversal completed.\n");
     }
 
-    private void bfs(Vertex vertex, Consumer<Vertex> vc, Consumer<Edge> ec, Set<String> visited) {
+    private void bfs(Vertex vertex, Consumer<Vertex> vc, Consumer<Edge> ec, boolean[] visited) {
         Queue<Vertex> queue = new LinkedList<>();
         queue.add(vertex);
 
         while (!queue.isEmpty()) {
             Vertex poll = queue.poll();
-            visited.add(poll.name());
+            visited[poll.id()] = true;
             vc.accept(poll);
             this.graph.adjacentEdges(poll.id()).stream()
-                    .filter(edge -> !visited.contains(edge.getTo().name()))
+                    .filter(edge -> !visited[edge.getTo().id()])
                     .peek(ec)
                     .map(Edge::getTo)
                     .forEach(queue::add);

@@ -34,18 +34,23 @@ public class GraphComputeTest {
     }
 
     @Test
-    public void testMstPrim() {
+    public void testMstLazyPrim() {
         Mst mst = new Mst(buildGraph("""
-                A B 1
-                A C 2
-                B C 2
-                B D 3
-                C D 4
+                0 1 4
+                0 5 8
+                1 5 11
+                1 2 8
+                5 6 7
+                2 6 2
+                5 4 8
+                4 6 4
+                2 3 3
+                4 3 3
                 """, false, true));
-        Mst.Result result = mst.prim();
+        Mst.Result result = mst.lazyPrim();
 
         result.getEdges().stream().map(Edge.UNDIRECTED_TO_STRING).forEach(System.out::println);
-        Assertions.assertEquals(6, result.getTotalWeight());
+        Assertions.assertEquals(2 + 3 + 3 + 4 + 7 + 8, result.getTotalWeight());
     }
 
     @Test

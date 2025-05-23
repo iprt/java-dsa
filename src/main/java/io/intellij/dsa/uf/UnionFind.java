@@ -12,11 +12,12 @@ public interface UnionFind<T> {
         return this.getCount() == 0;
     }
 
+    default boolean contains(T data) {
+        return false;
+    }
+
     // 获取集合的大小
     int getCount();
-
-    // 集合中是否包含元素
-    boolean contains(T data);
 
     // 添加元素到集合中
     boolean add(T data);

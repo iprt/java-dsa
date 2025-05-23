@@ -3,6 +3,7 @@ package io.intellij.dsa.tree.heap;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -23,33 +24,61 @@ import static io.intellij.dsa.DSAUtils.swap;
  * @since 2025-05-13
  */
 @Slf4j
-public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
+public class HeapImpl<T> implements Heap<T> {
     private static final int DEFAULT_CAPACITY = 7;
-    private final Type type;
 
-    private T[] data;
+    private final Type type;
+    private final Comparator<T> comparator;
+
+    private Object[] data;
     private int count;
     private int capacity;
 
+    public HeapImpl(Type type, Comparator<T> comparator) {
+        this(DEFAULT_CAPACITY, type, comparator);
+    }
+
     public HeapImpl() {
-        this(DEFAULT_CAPACITY, Type.MIN);
+        // 默认使用最小堆
+        this(Type.MIN, null);
     }
 
-    public HeapImpl(Type type) {
-        this(DEFAULT_CAPACITY, type);
+    public HeapImpl(@NotNull Type type) {
+        this(type, null);
     }
 
-    public HeapImpl(@NotNull T[] array, Type type) {
-        this(array.length, type);
+    public HeapImpl(Comparator<T> comparator) {
+        this(Type.MIN, comparator);
+    }
+
+    public HeapImpl(@NotNull T[] array, Type type, Comparator<T> comparator) {
+        this(array.length, type, comparator);
         this.heapify(array);
     }
 
-    @SuppressWarnings("unchecked")
-    public HeapImpl(int initCap, Type type) {
+    public HeapImpl(@NotNull T[] array, Type type) {
+        this(array, type, null);
+        this.heapify(array);
+    }
+
+    public HeapImpl(@NotNull T[] array, Comparator<T> comparator) {
+        this(array, null, comparator);
+        this.heapify(array);
+    }
+
+    public HeapImpl(@NotNull T[] array) {
+        this(array, Type.MIN, null);
+        this.heapify(array);
+    }
+
+    private HeapImpl(int initCap, Type type, Comparator<T> comparator) {
         if (initCap < 0) {
             throw new IllegalArgumentException("Capacity must be non-negative");
         }
-        this.type = Objects.requireNonNullElse(type, Type.MIN);
+        // 默认使用最小堆
+        this.type = type == null ? Type.MIN : type;
+        this.comparator = comparator;
+
         int realCapacity = DEFAULT_CAPACITY;
         while (initCap > realCapacity) {
             realCapacity = realCapacity * 2 + 1;
@@ -58,7 +87,7 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
         this.capacity = realCapacity;
 
         this.count = 0;
-        this.data = (T[]) new Comparable[realCapacity];
+        this.data = new Object[realCapacity];
     }
 
     @Override
@@ -89,12 +118,13 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public T extract() {
         if (this.count == 0) {
             return null;
         }
-        T max = data[0];
+        T max = (T) data[0];
         // 将最后一个元素放到根节点
         data[0] = data[count - 1];
         data[count - 1] = null;
@@ -107,25 +137,25 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
         return max;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T get() {
         if (this.count == 0) {
             return null;
         }
-        return data[0];
+        return (T) data[0];
     }
 
     @Override
-    public Type getType() {
+    public Type type() {
         return this.type;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void clear() {
         this.capacity = DEFAULT_CAPACITY;
         this.count = 0;
-        this.data = (T[]) new Comparable[capacity];
+        this.data = new Object[capacity];
     }
 
     // parent index = (index - 1) / 2
@@ -166,33 +196,36 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
         }
     }
 
-    private boolean elementCompare(T a, T b) {
-        if (this.type == Type.MAX) {
-            return greater(a, b);
+    @SuppressWarnings("unchecked")
+    private boolean elementCompare(Object a, Object b) {
+        if (this.comparator != null) {
+            return this.type == Type.MIN ? this.comparator.compare((T) a, (T) b) < 0 : this.comparator.compare((T) a, (T) b) > 0;
+        }
+        // 默认使用 Comparable 接口进行比较
+        if (a instanceof @SuppressWarnings("rawtypes")Comparable ca && b instanceof @SuppressWarnings("rawtypes")Comparable cb) {
+            return this.type == Type.MIN ? less(ca, cb) : greater(ca, cb);
         } else {
-            return less(a, b);
+            throw new IllegalArgumentException("元素必须实现 Comparable 接口");
         }
     }
 
     // 扩容
-    @SuppressWarnings("unchecked")
     private void expand() {
         // 树添加一层
         int newCapacity = this.capacity * 2 + 1;
-        T[] newData = (T[]) new Comparable[newCapacity];
+        Object[] newData = new Object[newCapacity];
         // 复制数据
         System.arraycopy(this.data, 0, newData, 0, this.count);
-        log.info("expand heap from {} to {}", this.capacity, newCapacity);
+        log.debug("expand heap from {} to {}", this.capacity, newCapacity);
         this.data = newData;
         this.capacity = newCapacity;
     }
 
     // 缩容
-    @SuppressWarnings("unchecked")
     private void reduce() {
         // 树减少一层
         int newCapacity = this.capacity / 2;
-        T[] newData = (T[]) new Comparable[newCapacity];
+        Object[] newData = new Object[newCapacity];
         // 复制数据
         System.arraycopy(this.data, 0, newData, 0, this.count);
         log.info("reduce heap from {} to {}", this.capacity, newCapacity);
@@ -210,21 +243,23 @@ public class HeapImpl<T extends Comparable<T>> implements Heap<T> {
                 return currentIndex < size();
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public T next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException("没有更多元素");
                 }
-                return data[currentIndex++];
+                return (T) data[currentIndex++];
             }
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void forEach(Consumer<? super T> action) {
         Objects.requireNonNull(action);
         for (int i = 0; i < count; i++) {
-            action.accept(data[i]);
+            action.accept((T) data[i]);
         }
     }
 

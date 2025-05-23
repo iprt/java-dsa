@@ -30,7 +30,7 @@ public class Components extends GraphCompute {
         Result result = new Result(this.graph);
         List<Vertex> vertices = this.graph.getVertices();
         for (Vertex vertex : vertices) {
-            if (!result.visited.contains(vertex)) {
+            if (!result.visited[vertex.id()]) {
                 result.count = result.count + 1;
                 this.compute(vertex, result);
             }
@@ -41,13 +41,13 @@ public class Components extends GraphCompute {
     // 递归计算
     void compute(Vertex vertex, Result result) {
         // result.visited.put(vertex.name(), result.count);
-        result.visited.add(vertex);
+        result.visited[vertex.id()] = true;
         for (Edge edge : this.graph.adjacentEdges(vertex.name())) {
             Vertex next = edge.getTo();
-            if (!result.visited.contains(next)) {
+            if (!result.visited[next.id()]) {
                 this.compute(next, result);
             }
-            result.visited.union(vertex, next);
+            result.unionFind.union(vertex, next);
         }
     }
 
@@ -56,12 +56,15 @@ public class Components extends GraphCompute {
 
         @Getter
         private int count;
-        // private final Map<String, Integer> visited;
-        private final UnionFind<Vertex> visited;
+
+        private final boolean[] visited;
+
+        private final UnionFind<Vertex> unionFind;
 
         private Result(Graph graph) {
             this.graph = graph;
-            this.visited = new IndexedUnionFind<>(Vertex::id);
+            this.visited = new boolean[graph.getVertices().size()];
+            this.unionFind = new IndexedUnionFind<>(Vertex::id);
         }
 
         public boolean hasPath(String source, String target) {
@@ -71,7 +74,8 @@ public class Components extends GraphCompute {
             if (sourceV == null || targetV == null) {
                 return false;
             }
-            return this.visited.isConnected(sourceV, targetV);
+
+            return this.unionFind.isConnected(sourceV, targetV);
         }
 
     }

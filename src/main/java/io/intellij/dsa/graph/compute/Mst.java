@@ -10,10 +10,8 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
 
 /**
  * Mst 最小生成树
@@ -27,38 +25,40 @@ public class Mst extends GraphCompute {
         check();
     }
 
-    public Result prim() {
-        Vertex start = this.graph.vertexIndex().getVertex(0);
-        return this.prim(start, new HashSet<>());
-    }
-
-    // prim: 广度遍历 + 切分
-    private Result prim(Vertex vertex, Set<String> visited) {
+    public Result lazyPrim() {
         Result result = new Result();
-        PriorityQueue<Edge> queue = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
-        queue.addAll(this.graph.adjacentEdges(vertex.name()));
+        boolean[] visited = new boolean[this.graph.vertexIndex().size()];
 
-        while (!queue.isEmpty()) {
-            Edge min = queue.poll();
-            String fromName = min.getFrom().name();
-            String toName = min.getTo().name();
-            if (visited.contains(fromName) && visited.contains(min.getTo().name())) {
-                continue;
-            }
-            result.edges.add(this.graph.getEdge(fromName, toName));
-            result.totalWeight += min.getWeight();
-            visited.add(fromName);
-            visited.add(toName);
-            for (Edge edge : this.graph.adjacentEdges(toName)) {
-                if (!visited.contains(edge.getTo().name())) {
-                    queue.add(edge);
-                }
-            }
-        }
+        Vertex start = this.graph.vertexIndex().getVertex(0);
+        PriorityQueue<Edge> minHeap = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
+        this.lazyPrim(start, visited, minHeap, result);
         return result;
     }
 
-    // kruskal: 堆 + 并查集 + 切分
+    // prim: 深度遍历 + 切分
+    private void lazyPrim(Vertex vertex, boolean[] visited, PriorityQueue<Edge> minHeap, Result result) {
+        visited[vertex.id()] = true;
+        minHeap.addAll(this.graph.adjacentEdges(vertex.id()));
+
+        while (!minHeap.isEmpty()) {
+            Edge min = minHeap.poll();
+            if (min == null) {
+                return;
+            }
+            Vertex toV = min.getTo();
+
+            if (!visited[toV.id()]) {
+                visited[toV.id()] = true;
+                result.edges.add(min);
+                result.totalWeight += min.getWeight();
+                // 形成切分
+                this.lazyPrim(toV, visited, minHeap, result);
+            }
+        }
+
+    }
+
+    // kruskal: 最小堆 + 并查集 + 切分
     public Result kruskal() {
         Result result = new Result();
         UnionFind<Vertex> vertexUF = new IndexedUnionFind<>(Vertex::id);
@@ -71,37 +71,15 @@ public class Mst extends GraphCompute {
             Edge minE = queue.poll();
             Vertex fromV = minE.getFrom(), toV = minE.getTo();
 
-            boolean containsFrom = vertexUF.contains(fromV);
-            boolean containsTo = vertexUF.contains(toV);
+            vertexUF.add(fromV);
+            vertexUF.add(toV);
 
-            if (!containsFrom && !containsTo) {
-                // 这条边第一次被访问
-                vertexUF.union(fromV, toV);
+            if (!vertexUF.isConnected(fromV, toV)) {
+                // 说明不在同一个集合中
                 result.edges.add(minE);
                 result.totalWeight += minE.getWeight();
-            } else {
-                if (containsFrom && !containsTo) {
-                    // 其中有一个顶点被访问过,说明在同一个集合中
-                    vertexUF.union(fromV, toV);
-                    result.edges.add(minE);
-                    result.totalWeight += minE.getWeight();
-                } else if (!containsFrom) {
-                    // 其中有一个顶点被访问过,说明在同一个集合中
-                    vertexUF.union(toV, fromV);
-                    result.edges.add(minE);
-                    result.totalWeight += minE.getWeight();
-                } else {
-                    // 判断两个顶点是不是切分的两边
-                    if (!vertexUF.isConnected(fromV, toV)) {
-                        // 说明不在同一个集合中
-                        result.edges.add(minE);
-                        result.totalWeight += minE.getWeight();
-
-                        vertexUF.union(fromV, toV);
-                    }
-                }
+                vertexUF.union(fromV, toV);
             }
-
         }
         return result;
     }

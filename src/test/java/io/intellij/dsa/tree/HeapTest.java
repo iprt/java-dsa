@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * HeapTest
@@ -20,7 +21,7 @@ public class HeapTest {
     public void testMinHeap() {
         Integer[] array = DSAUtils.createRandomArray(1000000, 1000000);
         Integer[] copyArray = DSAUtils.copyArray(array);
-        HeapImpl<Integer> heap = new HeapImpl<>(Heap.Type.MIN);
+        HeapImpl<Integer> heap = new HeapImpl<>();
         for (Integer i : array) {
             heap.add(i);
         }
@@ -37,7 +38,8 @@ public class HeapTest {
         Integer[] array = DSAUtils.createRandomArray(1000000, 1000000);
         Integer[] copyArray = DSAUtils.copyArray(array);
 
-        HeapImpl<Integer> heap = new HeapImpl<>(array, Heap.Type.MIN);
+        // 最大堆 反过来比较
+        HeapImpl<Integer> heap = new HeapImpl<>(array, Heap.Type.MAX, Comparator.comparing(Integer::intValue).reversed());
         Arrays.sort(copyArray);
         for (Integer integer : copyArray) {
             Integer min = heap.extract();

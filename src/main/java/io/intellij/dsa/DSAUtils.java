@@ -68,7 +68,7 @@ public class DSAUtils {
      * @param i     the index of the first element
      * @param j     the index of the second element
      */
-    public static <E extends Comparable<E>> void swap(E @NotNull [] array, int i, int j) {
+    public static <E> void swap(E @NotNull [] array, int i, int j) {
         E temp = array[i];
         array[i] = array[j];
         array[j] = temp;

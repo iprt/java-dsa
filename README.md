@@ -37,7 +37,7 @@
     - 深度遍历(`dfs`)
     - 广度遍历(`bfs`)
 - [最小生成树](src/main/java/io/intellij/dsa/graph/compute/Mst.java)
-    - `Prim`算法：广度遍历 + 切分
+    - `LazyPrim`算法：深度遍历 + 切分
     - `Kruskal`算法：最小堆 + 并查集 + 切分
 - [无向图联通分量](src/main/java/io/intellij/dsa/graph/compute/Components.java)
 - [单源最短路径](src/main/java/io/intellij/dsa/graph/compute/Dijkstra.java)
