@@ -13,7 +13,7 @@ public interface Graph {
     double DEFAULT_UNWEIGHTED_VALUE = 1.0;
 
     default boolean isEmpty() {
-        return verticesNum() == 0;
+        return getVerticesNum() == 0;
     }
 
     // 是否有向图
@@ -23,10 +23,10 @@ public interface Graph {
     boolean isWeighted();
 
     // 顶点数
-    int verticesNum();
+    int getVerticesNum();
 
     // 边数
-    int edgesNum();
+    int getEdgesNum();
 
     // 所有的顶点
     List<Vertex> getVertices();

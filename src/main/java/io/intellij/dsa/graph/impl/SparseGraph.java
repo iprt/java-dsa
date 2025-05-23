@@ -50,12 +50,12 @@ public class SparseGraph implements Graph {
     }
 
     @Override
-    public int verticesNum() {
+    public int getVerticesNum() {
         return vertexIndex.size();
     }
 
     @Override
-    public int edgesNum() {
+    public int getEdgesNum() {
         return this.edgesCount;
     }
 
