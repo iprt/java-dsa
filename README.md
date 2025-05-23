@@ -14,6 +14,11 @@
 
 ## 查找
 
+[并查集定义](src/main/java/io/intellij/dsa/uf/UnionFind.java)：路径压缩，快速取并
+
+- [基于索引的并查集](src/main/java/io/intellij/dsa/uf/IndexedUnionFind.java)
+- [基于树的并查集](src/main/java/io/intellij/dsa/uf/TreeUnionFind.java)
+
 [堆的定义](src/main/java/io/intellij/dsa/tree/heap/Heap.java)
 
 - [堆的实现](src/main/java/io/intellij/dsa/tree/heap/HeapImpl.java)
@@ -23,6 +28,7 @@
 [AVL平衡树](src/main/java/io/intellij/dsa/tree/bst/avl/AvlTree.java)
 
 - [旋转](src/main/java/io/intellij/dsa/tree/bst/avl/Rotate.java)
+-
 
 ## 图
 
