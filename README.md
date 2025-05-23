@@ -27,8 +27,7 @@
 
 [AVL平衡树](src/main/java/io/intellij/dsa/tree/bst/avl/AvlTree.java)
 
-- [旋转](src/main/java/io/intellij/dsa/tree/bst/avl/Rotate.java)
--
+- [旋转实现](src/main/java/io/intellij/dsa/tree/bst/avl/Rotate.java)
 
 ## 图
 
